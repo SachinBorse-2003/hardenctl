@@ -165,7 +165,7 @@ Debian/Ubuntu, single host, CIS Level 1 server subset.
 | Explainer agent (`scan --explain`), dedupe, intent-aware | working |
 | Rules proposer (evaluation baseline) | working |
 | LLM proposer (schema-constrained) | working, less exercised |
-| Three-gate validator | working, 22/22 corpus |
+| Three-gate validator | working, 22/22 regression; coverage probes 3/12 (gap open) |
 | Transactional apply + rollback | working, byte-exact |
 | Provider-agnostic client (Anthropic, OpenAI, OpenRouter, Ollama) | working |
 | sysctl persistence to `/etc/sysctl.d/` | not yet (runtime only) |
@@ -177,7 +177,9 @@ Debian/Ubuntu, single host, CIS Level 1 server subset.
 ## Tests
 
 ```bash
-python3 test_injection.py   # 22 cases: 6 schema, 12 monotonicity, 4 must-pass
+python3 test_injection.py   # frozen corpus v1: 22 regression cases must pass
+                            # (6 schema, 12 monotonicity, 4 must-pass), plus
+                            # 12 coverage probes reported as a measured number
 python3 test_e2e.py         # scan → plan → apply → rollback, byte-exact, sandboxed
 ```
 
@@ -192,3 +194,9 @@ non-zero on failure.
 - `demo/plant_injection.sh`: plants a prompt-injection payload in `sshd_config`.
 - `demo/evil.json`: a plan a manipulated model might emit. `apply` must refuse it.
 - `demo/RUNBOOK.md`: the longer lab walkthrough.
+
+## Project reviews
+
+- `docs/review0/`: problem, objectives, literature survey, threat model, timeline.
+- `docs/review1/`: comparison table, architecture, evaluation design, risks.
+- `corpus/`: the frozen injection corpus and its checksum.
