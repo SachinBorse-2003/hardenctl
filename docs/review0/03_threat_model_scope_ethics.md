@@ -57,7 +57,7 @@ executor. Nothing to the left, including the model, is trusted.
 
 | Need | Availability |
 |---|---|
-| Data | Generated, not collected: a weak-baseline lab VM (`demo/setup_lab.sh`), a frozen prompt-injection corpus (currently 22 cases), seeded intent scenarios. No third-party dataset or licence required |
+| Data | Generated, not collected: a weak-baseline lab VM (`lab/setup_lab.sh`), a frozen prompt-injection corpus (currently 22 cases), seeded intent scenarios. No third-party dataset or licence required |
 | Tools / libraries | Python 3.12, psutil, pydantic v2, typer, rich, PyYAML (all open source); OpenSCAP + SCAP Security Guide for scoring; dev-sec ansible-os-hardening as a baseline |
 | Compute | One VMware VM (Ubuntu 24.04). No GPU. Model calls through an API or local Ollama; the rules path needs neither |
 | Cost | Zero with rules/Ollama; small API cost for LLM-path experiments |

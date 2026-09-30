@@ -64,7 +64,7 @@ either way.
 
 ```bash
 sudo eval/run_baselines.sh prep            # packages + SCAP content (checksum-verified)
-sudo demo/setup_lab.sh                     # weak lab; then VMware snapshot "weak-lab"
+sudo lab/setup_lab.sh                      # weak lab; then VMware snapshot "weak-lab"
 sudo eval/run_baselines.sh hardenctl       # rules (+ llm): score, rollback, re-score
 sudo eval/run_baselines.sh openscap        # then revert to "weak-lab"
 sudo eval/run_baselines.sh devsec          # then revert to "weak-lab"

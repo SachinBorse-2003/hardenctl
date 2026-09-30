@@ -10,7 +10,7 @@
 # one starts from a fresh "weak-lab" snapshot and ends with you reverting it.
 #
 #   sudo eval/run_baselines.sh prep          # once: packages + SCAP content
-#   sudo demo/setup_lab.sh                   # build the weak lab, then SNAPSHOT it: "weak-lab"
+#   sudo lab/setup_lab.sh                    # build the weak lab, then SNAPSHOT it: "weak-lab"
 #   sudo eval/run_baselines.sh hardenctl     # rules (and llm if configured); rolls itself back
 #   sudo eval/run_baselines.sh openscap      # then revert to "weak-lab"
 #   sudo eval/run_baselines.sh devsec        # then revert to "weak-lab"

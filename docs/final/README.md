@@ -6,7 +6,7 @@ root on the VM or something only you can do.
 
 | Checklist item | Where | Status |
 |---|---|---|
-| Full system implemented and demonstrated end-to-end | `demo/RUNBOOK.md`; `hardenctl` v1.0.0 | done in code; **live demo on the VM is yours** |
+| Full system implemented and demonstrated end-to-end | `hardenctl` v1.0.0; testbed in `lab/` | done in code; **live run on the VM is yours** |
 | Final results with statistical rigour (multiple runs/seeds, CIs) | [01_results](01_results.md) | done: 30 seeded runs per suite, Wilson/bootstrap 95% CIs |
 | Comparison table against 2–3 baselines | [02_baseline_comparison](02_baseline_comparison.md) | gate v1 vs v2 vs v2.1 and rules vs LLM: done. **OpenSCAP and dev-sec CIS delta: pending** (`eval/run_baselines.sh`, root) |
 | Robustness and evasion testing (CyberSec) | [04_robustness_and_evasion](04_robustness_and_evasion.md) | done: held-out corpus v2, 438-case ablation, poisoned LLM runs |

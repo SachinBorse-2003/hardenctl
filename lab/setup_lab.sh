@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# setup_lab.sh — create a deliberately weak baseline for the hardenctl demo.
+# setup_lab.sh — create a deliberately weak baseline for the hardenctl lab.
 #
 #   LAB VM ONLY. This intentionally weakens SSH, file permissions and kernel
 #   settings. Never run it on a machine you care about, and never on anything
@@ -18,7 +18,7 @@ ok()  { printf "%s[+]%s %s\n" "$GRN" "$OFF" "$1"; }
 
 # ---------------------------------------------------------------- restore ---
 if [[ "${1:-}" == "--restore" ]]; then
-    say "restoring pre-demo state"
+    say "restoring pre-lab state"
     [[ -f /etc/ssh/sshd_config.lab-orig ]] && \
         cp /etc/ssh/sshd_config.lab-orig /etc/ssh/sshd_config && \
         chmod 600 /etc/ssh/sshd_config && ok "sshd_config restored"
@@ -60,7 +60,7 @@ say "weakening sshd_config"
     cp /etc/ssh/sshd_config /etc/ssh/sshd_config.lab-orig
 
 cat > /etc/ssh/sshd_config <<'EOF'
-# Demo baseline — deliberately weak
+# Lab baseline — deliberately weak
 Port 22
 PermitRootLogin yes
 PasswordAuthentication yes

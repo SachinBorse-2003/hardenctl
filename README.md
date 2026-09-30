@@ -209,15 +209,12 @@ python3 test_e2e.py         # scan → plan → apply → rollback, byte-exact, 
 All need no root and touch nothing outside a temp directory. Each exits
 non-zero on failure. CI runs them on every push (`.github/workflows/ci.yml`).
 
-## Demo
+## Lab testbed
 
-- `demo/RUNBOOK.md`: the final-review demo (intent, hardening with rollback,
-  injection refusal, numbers).
-- `demo/INTENT_DEMO.md`: the six-step intent and drift story.
-- `demo/setup_lab.sh`: builds a deliberately weak lab baseline. **Lab VM
-  only; take a snapshot first.**
-- `demo/plant_injection.sh`: plants a prompt-injection payload in `sshd_config`.
-- `demo/evil.json`: a plan a manipulated model might emit. `apply` must refuse it.
+- `lab/setup_lab.sh`: builds a deliberately weak lab baseline. **Lab VM
+  only; take a snapshot first.** `--restore` undoes it.
+- `lab/plant_injection.sh`: plants a prompt-injection payload in `sshd_config`.
+- `lab/evil.json`: a plan a manipulated model might emit. `apply` must refuse it.
 
 ## Project reviews
 

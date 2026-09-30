@@ -58,7 +58,7 @@ def test_justification_is_never_read():
 
 
 def test_evil_plan_is_refused():
-    plan = Plan(**json.loads((REPO / "demo" / "evil.json").read_text()))
+    plan = Plan(**json.loads((REPO / "lab" / "evil.json").read_text()))
     res = validate_plan(plan)
     assert {r.action_id for r in res.rejections} == {"x1", "x2", "x3"}
     # x4 (fs.suid_dumpable=0) is a hardening change and correctly passes
