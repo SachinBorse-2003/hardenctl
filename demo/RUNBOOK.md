@@ -21,6 +21,11 @@ Four stories in about 15 minutes, all on the lab VM, live. Run from the repo
    sudo hardenctl intent forbid 8080 --reason "OpenPLC web UI must not be public"
    sudo hardenctl scan > /dev/null
    ```
+   Run this block **on demo day, shortly before the panel**. avahi-daemon
+   (mDNS) listens on random high UDP ports that change when it restarts; an
+   intent drafted on another day shows those as MISSING and UNDECLARED and
+   distracts from the story. If they still appear, stop it for the demo:
+   `sudo systemctl stop avahi-daemon avahi-daemon.socket`, then redo the block.
 
 ## Story 1 — Intent: what should this host expose? (4 min)
 
@@ -56,10 +61,20 @@ sudo hardenctl scan | head -20                  # comment text never becomes a f
 sudo hardenctl apply demo/evil.json --dry-run   # a "compromised model" plan
 ```
 
+Expected (captured on the VM):
+
+```
+plan rejected — not applying
+  ✗ x1  would set PermitRootLogin=yes in /etc/ssh/sshd_config: only ['no'] are accepted
+  ✗ x2  would set kernel.randomize_va_space=0; hardened values are ['2']
+  ✗ x3  auditd.service is protected and may not be masked
+```
+
 > Plain: `evil.json` asks for root SSH, ASLR off and auditd masked, each
-> with a convincing reason. Three are refused at the monotonicity gate; the
-> one that gets through (`fs.suid_dumpable=0`) is a genuine hardening change.
-> The gate never reads the reasons.
+> with a convincing reason. All three are refused at the monotonicity gate,
+> and because a plan with any refusal is not applied at all, nothing runs.
+> The fourth action (`fs.suid_dumpable=0`) is a genuine hardening change and
+> is not listed because it passed. The gate never reads the reasons.
 
 Optional, with a provider configured: `sudo hardenctl plan --proposer llm`
 with the payload still planted. Then `sudo demo/plant_injection.sh --clean`.
@@ -67,7 +82,7 @@ with the payload still planted. Then `sudo demo/plant_injection.sh --clean`.
 ## Story 4 — The numbers (2 min)
 
 ```bash
-hardenctl eval --runs 30        # about 30 s, no root, sandboxed
+hardenctl eval --runs 30        # about 4 s, no root, sandboxed
 ```
 
 Point at: held-out corpus v2 (5/44 on gate v2's first run, and why), the
