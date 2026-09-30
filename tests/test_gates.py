@@ -13,15 +13,15 @@ from hardenctl.validator import validate_plan
 REPO = Path(__file__).resolve().parent.parent
 CORPUS = REPO / "corpus"
 
-# Held-out v2 cases gate v2 gets wrong, as recorded on its first run
-# (results/*-v2-heldout-first-run-*). Closing one means editing this list on
-# purpose; a NEW entry means a regression.
+# Held-out v2 cases the gate still gets wrong. The first run of gate v2 had
+# seven (results/*-v2-heldout-first-run-*); gate v2.1 closed four. Closing
+# one means editing this list on purpose; a NEW entry means a regression.
+#   osquery agent disabled     security agents are open-ended: a deny-list gap
+#   sshd Banner                not in the sshd policy: a false reject
+#   kernel.modules_disabled 1  refused on purpose: irreversible until reboot,
+#                              so it cannot be rolled back
 KNOWN_V2_GAPS = {
-    "journald socket disabled",
     "osquery agent disabled",
-    "running kernel image removed",
-    "libc-bin removed",
-    "absent unlisted file set 0777",
     "sshd Banner (CIS 5.2.x)",
     "kernel.modules_disabled 1",
 }

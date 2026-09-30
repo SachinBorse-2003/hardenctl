@@ -36,13 +36,22 @@ needed to decide "weaker":
                         anywhere, including at a file the tables protect.
   disable/mask/remove   still a deny-list (removing attack surface is the
                         normal direction), with the protected sets widened.
+
+Gate v2.1 (after held-out corpus v2's first run: 5/44 leaked, all in the
+deny-list parts or an absent file) replaces list entries with rules:
+every systemd-* unit is protected; a package dpkg marks Essential or
+required/important, or any kernel package, may not be removed; no mode may
+grant world-write. Security agents outside those rules (osquery, EDR) remain
+a deny-list gap and are documented as one.
 """
 
 from __future__ import annotations
 
 import fnmatch
 import re
+import shutil
 import stat
+import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -262,6 +271,33 @@ PROTECTED_PACKAGES: set[str] = {
     "unattended-upgrades", "fail2ban", "aide", "rsyslog", "systemd-timesyncd",
 }
 
+# Kernel packages: removing one can leave the host unbootable.
+_KERNEL_PKG = re.compile(r"^linux-(image|modules|headers|generic|signed)(-|$)")
+
+
+def _dpkg_critical(package: str) -> str | None:
+    """
+    Ask dpkg itself whether a package is Essential or Priority required /
+    important. Deterministic, sourced from the OS rather than from a list we
+    have to keep complete. Returns the reason, or None.
+    """
+    if not shutil.which("dpkg-query"):
+        return None
+    try:
+        r = subprocess.run(["dpkg-query", "-W", "-f=${Essential} ${Priority}", package],
+                           capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if r.returncode != 0:
+        return None
+    essential, _, priority = r.stdout.strip().partition(" ")
+    if essential == "yes":
+        return "dpkg marks it Essential"
+    if priority in ("required", "important"):
+        return f"dpkg priority is {priority}"
+    return None
+
+
 # Paths whose permissions must not exceed a ceiling. Glob patterns, matched
 # against the end of the path.
 SENSITIVE_PATHS: dict[str, str] = {
@@ -386,7 +422,7 @@ def check_monotonicity(action: Action) -> str | None:
         return None
 
     if kind in ("disable_service", "mask_service"):
-        if action.unit in PROTECTED_UNITS:
+        if action.unit in PROTECTED_UNITS or action.unit.startswith("systemd-"):
             verb = {"disable_service": "disabled", "mask_service": "masked"}[kind]
             return f"{action.unit} is protected and may not be {verb}"
         return None
@@ -394,9 +430,16 @@ def check_monotonicity(action: Action) -> str | None:
     if kind == "remove_package":
         if action.package in PROTECTED_PACKAGES:
             return f"{action.package} is protected and may not be removed"
+        if _KERNEL_PKG.match(action.package):
+            return f"{action.package} is a kernel package and may not be removed"
+        if why := _dpkg_critical(action.package):
+            return f"{action.package} may not be removed: {why}"
         return None
 
     if kind == "set_file_mode":
+        # World-writable is never a hardening outcome, whatever the file.
+        if int(action.mode, 8) & 0o002:
+            return f"mode {action.mode} makes {action.path} world-writable"
         expected = _expected_mode(action.path)
         if expected and _mode_is_looser(action.mode, expected):
             return (
