@@ -68,7 +68,7 @@ def wilson(k: int, n: int, z: float = 1.96) -> list[float]:
 def rate(k: int, n: int) -> dict:
     out = {"k": k, "n": n, "rate": round(k / n, 4) if n else None, "ci95": wilson(k, n)}
     if k == 0 and n:
-        out["upper95_rule_of_three"] = round(3 / n, 4)
+        out["upper95_rule_of_three"] = round(min(1.0, 3 / n), 4)
     return out
 
 

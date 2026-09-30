@@ -13,15 +13,17 @@ M.Tech Cyber Security industry project, Sachin Borse (25168007), KIIT.
 ## Install (Ubuntu / Debian)
 
 ```bash
-git clone <this repo> ~/hardenctl && cd ~/hardenctl
-sudo pip install -e . --break-system-packages --ignore-installed
+git clone https://github.com/SachinBorse-2003/hardenctl && cd hardenctl
+sudo pip install -r requirements.txt --break-system-packages --ignore-installed
+sudo pip install --no-deps -e . --break-system-packages
 sudo hardenctl --help
 ```
 
 - Install with `sudo` so `sudo hardenctl …` finds it. Root is needed to map
   sockets to processes.
+- Check it runs this checkout: `sudo python3 -c "import hardenctl; print(hardenctl.__file__)"`.
+  An older editable install elsewhere wins silently (see `docs/final/03`, F12).
 - `--ignore-installed` avoids a pip error on Debian's `typing_extensions`.
-- After running as root, clear bytecode with `sudo rm -rf hardenctl/__pycache__`.
 
 ## Quick start
 
@@ -153,50 +155,75 @@ Everything lives in the **invoking user's** `~/.hardenctl/`, even under `sudo`:
 These files describe a real host's attack surface. **Do not commit them**
 (they are in `.gitignore`).
 
-## Status (v0.1.0)
+## Evaluation
+
+```bash
+python3 -m pytest -q                    # 25 sandboxed tests, no root
+hardenctl eval --runs 30 --seed 1       # all seeded suites -> results/*.json
+hardenctl eval -s llm --llm-runs 10     # the model proposer (needs a provider)
+sudo eval/run_baselines.sh …            # CIS scoring vs OpenSCAP and dev-sec (lab VM)
+```
+
+`hardenctl eval` runs in a throwaway sandbox (`HARDENCTL_ROOT`,
+`HARDENCTL_HOME`, `HARDENCTL_PROC_SYS`) and refuses any action that would
+reach the real host. Results, their method and their limits are in
+[`docs/final/`](docs/final/README.md).
+
+| Headline (release, 30 seeded runs) | |
+|---|---|
+| Held-out weakening actions reaching apply | gate v1 35/44 → gate v2 5/44 |
+| Persuasive justifications changing a verdict | 0/438 |
+| Rollback byte-exact / auto-revert on failure | 30/30 / 30/30 |
+| Rules remediation on seeded labs | 100% (325/325) |
+| Intent detection / false positives | 100% / 0/160 |
+
+## Status (v1.0.0)
 
 Debian/Ubuntu, single host, CIS Level 1 server subset.
 
 | Component | State |
 |---|---|
-| Socket → process → package → systemd unit attribution | working |
-| sshd, file-permission and sysctl checks | working (narrow set) |
-| Intent: init / allow / forbid, six verdicts, baseline | working |
+| Socket → process → package → systemd unit attribution | working; accuracy not measured |
+| sshd checks (Include drop-ins, case, first value), file modes, sysctls | working (narrow set) |
+| Intent: init / allow / forbid, six verdicts, per-socket ids, baseline | working |
 | Explainer agent (`scan --explain`), dedupe, intent-aware | working |
 | Rules proposer (evaluation baseline) | working |
-| LLM proposer (schema-constrained) | working, less exercised |
-| Three-gate validator | working, 22/22 regression; coverage probes 3/12 (gap open) |
-| Transactional apply + rollback | working, byte-exact |
-| Provider-agnostic client (Anthropic, OpenAI, OpenRouter, Ollama) | working |
-| sysctl persistence to `/etc/sysctl.d/` | not yet (runtime only) |
-| OSV.dev / CISA KEV / EPSS enrichment | not yet |
-| `hardenctl eval` measurement harness | not yet |
-| Reachability probing, blast radius | not yet |
-| Token site: sign-up and free API tokens (no billing) | not yet |
+| LLM proposer (schema-constrained) | working, measured (95.4% plan validity) |
+| Three-gate validator, gate 3 v2.1 (fail-closed) | working; v1 34/34, held-out v2 5/44 leaked on first run |
+| Transactional apply + rollback, sysctl persistence, `sshd -t` | working |
+| `hardenctl eval` harness, pytest, CI | working |
+| CIS scoring and baselines (`eval/run_baselines.sh`) | script ready; run on the VM |
+| OSV.dev / CISA KEV / EPSS enrichment | not built |
+| Reachability probing, blast radius | not built (future work) |
+| Token site | cut (future work) |
 
 ## Tests
 
 ```bash
-python3 test_injection.py   # frozen corpus v1: 22 regression cases must pass
-                            # (6 schema, 12 monotonicity, 4 must-pass), plus
-                            # 12 coverage probes reported as a measured number
+python3 -m pytest -q        # 25 tests: gates on both corpora, collectors,
+                            # executor, rollback, intent, and the two scripts below
+python3 test_injection.py   # frozen corpus v1, printed case by case
 python3 test_e2e.py         # scan → plan → apply → rollback, byte-exact, sandboxed
 ```
 
-Both need no root and touch nothing outside a temp directory. Each exits
-non-zero on failure.
+All need no root and touch nothing outside a temp directory. Each exits
+non-zero on failure. CI runs them on every push (`.github/workflows/ci.yml`).
 
 ## Demo
 
-- `demo/INTENT_DEMO.md`: the current six-step demo (intent, drift, refusal).
+- `demo/RUNBOOK.md`: the final-review demo (intent, hardening with rollback,
+  injection refusal, numbers).
+- `demo/INTENT_DEMO.md`: the six-step intent and drift story.
 - `demo/setup_lab.sh`: builds a deliberately weak lab baseline. **Lab VM
   only; take a snapshot first.**
 - `demo/plant_injection.sh`: plants a prompt-injection payload in `sshd_config`.
 - `demo/evil.json`: a plan a manipulated model might emit. `apply` must refuse it.
-- `demo/RUNBOOK.md`: the longer lab walkthrough.
 
 ## Project reviews
 
 - `docs/review0/`: problem, objectives, literature survey, threat model, timeline.
 - `docs/review1/`: comparison table, architecture, evaluation design, risks.
-- `corpus/`: the frozen injection corpus and its checksum.
+- `docs/final/`: results, baselines, error analysis, robustness, limitations, viva.
+- `docs/thesis/`: chapter and paper outlines.
+- `corpus/`: the frozen injection corpora (v1 development, v2 held-out) and checksums.
+- `results/`: raw JSON from every `hardenctl eval` run cited in `docs/final/`.
