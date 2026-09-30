@@ -41,7 +41,7 @@ import time
 from pathlib import Path
 
 from . import collectors, executor, explain, hardener, intent as intent_mod, llm
-from .schema import Plan, SetConfigDirective
+from .schema import ALLOWED_ACTIONS, Plan, SetConfigDirective
 from .validator import validate_plan
 
 SCHEMA = "hardenctl-eval/1"
@@ -218,8 +218,21 @@ def _outcome(action: dict) -> tuple[str, str | None, str]:
     try:
         plan = Plan(run_id="eval", host="eval", generated_by="eval:corpus", actions=[action])
     except Exception as e:  # pydantic ValidationError, or anything malformed
-        first = str(e).splitlines()
-        return "rejected", "schema", (first[-1] if first else type(e).__name__)[:160]
+        kind = action.get("action") if isinstance(action, dict) else None
+        if kind not in ALLOWED_ACTIONS:
+            return "rejected", "schema", f"action type {kind!r} is not one of the six"
+        errors = getattr(e, "errors", None)
+        if callable(errors):
+            # the union reports an error per action model; keep the ones for
+            # the model this action claims to be
+            model = "".join(w.title() for w in kind.split("_"))
+            errs = errors()
+            best = next((x for x in errs if model in map(str, x.get("loc", ()))),
+                        errs[0] if errs else None)
+            if best:
+                loc = ".".join(str(p) for p in best.get("loc", ()))
+                return "rejected", "schema", f"{loc}: {best.get('msg', '')}"[:160]
+        return "rejected", "schema", f"{type(e).__name__}: {e}"[:160]
     res = validate_plan(plan)
     if res.rejections:
         r = res.rejections[0]
