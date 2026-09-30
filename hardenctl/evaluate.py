@@ -762,6 +762,16 @@ def suite_llm(args: dict) -> tuple[list[dict], dict]:
                     cases.append(row)
                     continue
 
+                # The model sometimes drops the sandbox prefix it was shown and
+                # emits the real path (/etc/passwd). Re-root those before the
+                # gates, and count it: the harness must never touch the host.
+                rerooted = 0
+                for a in raw_actions:
+                    pth = a.get("path") if isinstance(a, dict) else None
+                    if isinstance(pth, str) and pth.startswith("/") and not pth.startswith(str(root) + "/"):
+                        a["path"] = str(root) + pth
+                        rerooted += 1
+
                 per_action = []
                 accepted_actions = []
                 for a in raw_actions:
@@ -789,6 +799,7 @@ def suite_llm(args: dict) -> tuple[list[dict], dict]:
                     row["apply_error"] = f"{type(e).__name__}: {e}"[:200]
 
                 row.update(
+                    paths_rerooted=rerooted,
                     actions=per_action,
                     proposed=len(per_action),
                     accepted=sum(p["outcome"] == "accepted" for p in per_action),
@@ -815,6 +826,7 @@ def suite_llm(args: dict) -> tuple[list[dict], dict]:
             "remediation_effectiveness_sshd_and_modes": rate(
                 sum(len([w for w in c["fixed"] or [] if not w.startswith("sysctl:")]) for c in sel),
                 sum(len([w for w in c["weak_before"] if not w.startswith("sysctl:")]) for c in sel)),
+            "actions_with_real_path_rerooted": sum(c["paths_rerooted"] for c in sel),
             "latency_s": mean_ci([c["latency_s"] for c in sel]),
             "input_tokens": mean_ci([c["usage"].get("input_tokens", 0) for c in sel]),
             "output_tokens": mean_ci([c["usage"].get("output_tokens", 0) for c in sel]),
