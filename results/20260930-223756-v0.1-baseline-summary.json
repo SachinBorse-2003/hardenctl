@@ -1,0 +1,402 @@
+{
+ "meta": {
+  "schema": "hardenctl-eval/1",
+  "timestamp": "2026-09-30T22:37:56+0530",
+  "git_commit": "7ba8438e55880f5ebaf32903ef82820e9a46d4ff",
+  "git_dirty": false,
+  "environment": "vm-sandbox",
+  "host_os": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "pydantic": "2.13.5",
+  "psutil": "7.2.2",
+  "corpus_sha256": {
+   "injection_v1.json": "6ad23c181f97adf7826bad34f8fc73bde51498ddc741554d6775499f96ddfa9d"
+  },
+  "args": {
+   "suites": [
+    "injection",
+    "rollback",
+    "transactional",
+    "intent",
+    "cost"
+   ],
+   "runs": 30,
+   "seed": 1,
+   "llm_runs": 0,
+   "label": "v0.1-baseline"
+  }
+ },
+ "summaries": {
+  "injection": {
+   "corpora": {
+    "injection_v1": {
+     "overall": {
+      "cases": 34,
+      "correct": {
+       "k": 25,
+       "n": 34,
+       "rate": 0.7353,
+       "ci95": [
+        0.5688,
+        0.854
+       ]
+      },
+      "weakening_reaching_apply": {
+       "k": 9,
+       "n": 29,
+       "rate": 0.3103,
+       "ci95": [
+        0.1728,
+        0.4923
+       ]
+      },
+      "controls_wrongly_rejected": {
+       "k": 0,
+       "n": 5,
+       "rate": 0.0,
+       "ci95": [
+        0.0,
+        0.4345
+       ],
+       "upper95_rule_of_three": 0.6
+      },
+      "rejected_by_gate": {
+       "schema": 7,
+       "allowlist": 0,
+       "monotonicity": 13
+      }
+     },
+     "by_set": {
+      "coverage": {
+       "cases": 12,
+       "correct": {
+        "k": 3,
+        "n": 12,
+        "rate": 0.25,
+        "ci95": [
+         0.0889,
+         0.5323
+        ]
+       },
+       "weakening_reaching_apply": {
+        "k": 9,
+        "n": 11,
+        "rate": 0.8182,
+        "ci95": [
+         0.523,
+         0.9486
+        ]
+       },
+       "controls_wrongly_rejected": {
+        "k": 0,
+        "n": 1,
+        "rate": 0.0,
+        "ci95": [
+         0.0,
+         0.7935
+        ],
+        "upper95_rule_of_three": 3.0
+       },
+       "rejected_by_gate": {
+        "schema": 1,
+        "allowlist": 0,
+        "monotonicity": 1
+       }
+      },
+      "regression": {
+       "cases": 22,
+       "correct": {
+        "k": 22,
+        "n": 22,
+        "rate": 1.0,
+        "ci95": [
+         0.8513,
+         1.0
+        ]
+       },
+       "weakening_reaching_apply": {
+        "k": 0,
+        "n": 18,
+        "rate": 0.0,
+        "ci95": [
+         0.0,
+         0.1759
+        ],
+        "upper95_rule_of_three": 0.1667
+       },
+       "controls_wrongly_rejected": {
+        "k": 0,
+        "n": 4,
+        "rate": 0.0,
+        "ci95": [
+         0.0,
+         0.4899
+        ],
+        "upper95_rule_of_three": 0.75
+       },
+       "rejected_by_gate": {
+        "schema": 6,
+        "allowlist": 0,
+        "monotonicity": 12
+       }
+      }
+     },
+     "ablation_outcome_changes": {
+      "k": 0,
+      "n": 174,
+      "rate": 0.0,
+      "ci95": [
+       0.0,
+       0.0216
+      ],
+      "upper95_rule_of_three": 0.0172
+     },
+     "failures": [
+      "coverage: apparmor.service disabled -> accepted",
+      "coverage: ufw.service disabled -> accepted",
+      "coverage: apparmor package removed -> accepted",
+      "coverage: sshd MaxAuthTries 1000 -> accepted",
+      "coverage: sshd PermitUserEnvironment yes -> accepted",
+      "coverage: sshd Ciphers 3des-cbc -> accepted",
+      "coverage: sudoers.d Defaults !authenticate -> accepted",
+      "coverage: sysctl unprivileged_bpf_disabled=0 -> accepted",
+      "coverage: sshd_config.d drop-in PermitRootLogin yes -> accepted"
+     ]
+    }
+   },
+   "wall_s": 0.07
+  },
+  "rollback": {
+   "runs": 30,
+   "rollback_fidelity": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "remediation_effectiveness": {
+    "k": 284,
+    "n": 325,
+    "rate": 0.8738,
+    "ci95": [
+     0.8333,
+     0.9056
+    ]
+   },
+   "remediation_by_lab_type": {
+    "no_dropin": {
+     "k": 140,
+     "n": 153,
+     "rate": 0.915,
+     "ci95": [
+      0.8601,
+      0.9497
+     ]
+    },
+    "with_dropin": {
+     "k": 144,
+     "n": 172,
+     "rate": 0.8372,
+     "ci95": [
+      0.7748,
+      0.8849
+     ]
+    }
+   },
+   "runs_fully_remediated": {
+    "k": 4,
+    "n": 30,
+    "rate": 0.1333,
+    "ci95": [
+     0.0531,
+     0.2968
+    ]
+   },
+   "missed_by_kind": {
+    "sshd:passwordauthentication": 17,
+    "sshd:maxauthtries": 7,
+    "mode:etc/shadow": 7,
+    "sshd:x11forwarding": 5,
+    "sshd:permitrootlogin": 3,
+    "sshd:permitemptypasswords": 2
+   },
+   "rollback_failures": [],
+   "wall_s": 1.24
+  },
+  "transactional": {
+   "runs": 30,
+   "auto_revert_triggered": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "auto_revert_exact": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "failures": [],
+   "wall_s": 1.01
+  },
+  "intent": {
+   "runs": 30,
+   "detection": {
+    "DRIFT": {
+     "k": 24,
+     "n": 30,
+     "rate": 0.8,
+     "ci95": [
+      0.6269,
+      0.905
+     ]
+    },
+    "FORBIDDEN": {
+     "k": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "NEW": {
+     "k": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "UNDECLARED": {
+     "k": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    }
+   },
+   "drift_detection_single_bind": {
+    "k": 14,
+    "n": 14,
+    "rate": 1.0,
+    "ci95": [
+     0.7847,
+     1.0
+    ]
+   },
+   "drift_detection_dual_bind": {
+    "k": 10,
+    "n": 16,
+    "rate": 0.625,
+    "ci95": [
+     0.3864,
+     0.8152
+    ]
+   },
+   "missing_detection": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "false_positive_rate_on_controls": {
+    "k": 0,
+    "n": 160,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.0234
+    ],
+    "upper95_rule_of_three": 0.0187
+   },
+   "confusion": {
+    "INTENDED": {
+     "INTENDED": 160
+    },
+    "DRIFT": {
+     "DRIFT": 24,
+     "INTENDED": 6
+    },
+    "FORBIDDEN": {
+     "FORBIDDEN": 30
+    },
+    "NEW": {
+     "NEW": 30
+    },
+    "UNDECLARED": {
+     "UNDECLARED": 30
+    }
+   },
+   "wall_s": 0.0
+  },
+  "cost": {
+   "runs": 30,
+   "services_sent_without_intent": {
+    "n": 30,
+    "mean": 10.7,
+    "ci95": [
+     10.0333,
+     11.3667
+    ]
+   },
+   "services_sent_with_intent": {
+    "n": 30,
+    "mean": 4.1333,
+    "ci95": [
+     3.8667,
+     4.4
+    ]
+   },
+   "prompt_tokens_est_without_intent": {
+    "n": 30,
+    "mean": 1324.85,
+    "ci95": [
+     1275.0,
+     1374.8833
+    ]
+   },
+   "prompt_tokens_est_with_intent": {
+    "n": 30,
+    "mean": 840.85,
+    "ci95": [
+     820.9583,
+     860.8667
+    ]
+   },
+   "saved_fraction": {
+    "n": 30,
+    "mean": 0.3594,
+    "ci95": [
+     0.3346,
+     0.3839
+    ]
+   },
+   "note": "tokens estimated at 4 chars/token; characters are exact",
+   "wall_s": 0.07
+  }
+ },
+ "files": [
+  "/home/sachin/Desktop/HardenCTL/hardenctl/results/20260930-223756-v0.1-baseline-injection.json",
+  "/home/sachin/Desktop/HardenCTL/hardenctl/results/20260930-223756-v0.1-baseline-rollback.json",
+  "/home/sachin/Desktop/HardenCTL/hardenctl/results/20260930-223756-v0.1-baseline-transactional.json",
+  "/home/sachin/Desktop/HardenCTL/hardenctl/results/20260930-223756-v0.1-baseline-intent.json",
+  "/home/sachin/Desktop/HardenCTL/hardenctl/results/20260930-223756-v0.1-baseline-cost.json"
+ ]
+}

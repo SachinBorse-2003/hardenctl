@@ -8,6 +8,7 @@ functions return; it never adds to it.
 
 from __future__ import annotations
 
+import glob
 import ipaddress
 import os
 import re
@@ -80,27 +81,36 @@ def collect_sockets() -> list[Finding]:
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
 
-        exposure = classify_exposure(addr)
-        sev = {
-            Exposure.PUBLIC: Severity.HIGH,
-            Exposure.PRIVATE: Severity.MEDIUM,
-            Exposure.LOOPBACK: Severity.INFO,
-            Exposure.UNKNOWN: Severity.MEDIUM,
-        }[exposure]
-        if exposure is Exposure.PUBLIC and runs_as == "root":
-            sev = Severity.CRITICAL
-
-        findings.append(Finding(
-            id=f"sock-{proto}-{port}",
-            category="socket",
-            severity=sev,
-            title=f"{proto}/{port} listening on {addr or '*'}",
-            detail=f"process={pname or 'unknown'} user={runs_as or 'unknown'}",
-            port=port, proto=proto, bind_addr=addr or "*",
-            exposure=exposure, process=pname, pid=c.pid, runs_as=runs_as,
-        ))
+        findings.append(socket_finding(addr, port, proto, pname, runs_as, c.pid))
 
     return findings
+
+
+def socket_finding(addr: str, port: int, proto: str, pname: str | None = None,
+                   runs_as: str | None = None, pid: int | None = None) -> Finding:
+    """One listening socket as a Finding. Split out so the eval harness can
+    feed seeded sockets through the same classification the scanner uses."""
+    exposure = classify_exposure(addr)
+    sev = {
+        Exposure.PUBLIC: Severity.HIGH,
+        Exposure.PRIVATE: Severity.MEDIUM,
+        Exposure.LOOPBACK: Severity.INFO,
+        Exposure.UNKNOWN: Severity.MEDIUM,
+    }[exposure]
+    if exposure is Exposure.PUBLIC and runs_as == "root":
+        sev = Severity.CRITICAL
+
+    return Finding(
+        # one id per socket, not per port: a port bound on loopback AND on
+        # 0.0.0.0 is two exposures, and the public one must not be hidden
+        id=f"sock-{proto}-{port}@{addr or '*'}",
+        category="socket",
+        severity=sev,
+        title=f"{proto}/{port} listening on {addr or '*'}",
+        detail=f"process={pname or 'unknown'} user={runs_as or 'unknown'}",
+        port=port, proto=proto, bind_addr=addr or "*",
+        exposure=exposure, process=pname, pid=pid, runs_as=runs_as,
+    )
 
 
 # --------------------------------------------------------------------------
@@ -168,59 +178,98 @@ def attribute_packages(findings: list[Finding]) -> list[Finding]:
 # Config inspection
 # --------------------------------------------------------------------------
 
-SSHD_CHECKS: dict[str, tuple[str, Severity]] = {
-    "PermitRootLogin": ("no", Severity.HIGH),
-    "PasswordAuthentication": ("no", Severity.MEDIUM),
-    "PermitEmptyPasswords": ("no", Severity.CRITICAL),
-    "X11Forwarding": ("no", Severity.LOW),
-    "MaxAuthTries": ("4", Severity.LOW),
-    "ClientAliveInterval": ("300", Severity.LOW),
-    "LoginGraceTime": ("60", Severity.LOW),
+# directive -> (CIS value, is the current value compliant?, severity).
+# Numeric settings are compared as numbers: MaxAuthTries 3 is stricter than
+# the CIS value of 4, not a mismatch to "fix" upwards.
+SSHD_CHECKS: dict[str, tuple[str, object, Severity]] = {
+    "PermitRootLogin": ("no", lambda v: v == "no", Severity.HIGH),
+    "PasswordAuthentication": ("no", lambda v: v == "no", Severity.MEDIUM),
+    "PermitEmptyPasswords": ("no", lambda v: v == "no", Severity.CRITICAL),
+    "X11Forwarding": ("no", lambda v: v == "no", Severity.LOW),
+    "MaxAuthTries": ("4", lambda v: v.isdigit() and 0 < int(v) <= 4, Severity.LOW),
+    "ClientAliveInterval": ("300", lambda v: v.isdigit() and 0 < int(v) <= 300, Severity.LOW),
+    "LoginGraceTime": ("60", lambda v: v.isdigit() and 0 < int(v) <= 60, Severity.LOW),
 }
 
+_SSHD_KEYWORD = {k.lower(): k for k in SSHD_CHECKS}
 
-def read_sshd_config(path: str = "/etc/ssh/sshd_config") -> dict[str, str]:
+
+def _strip_comment(value: str) -> str:
+    """Drop a trailing `# ...` comment. None of the values we read can contain '#'."""
+    return re.split(r"\s#", value, maxsplit=1)[0].strip()
+
+
+def read_sshd_effective(path: str = "/etc/ssh/sshd_config",
+                        _seen: dict | None = None, _depth: int = 0) -> dict[str, tuple[str, str, str]]:
     """
-    Parse effective sshd directives. First occurrence wins, matching sshd's own
-    precedence. Comment text is discarded here — it never reaches a model.
+    Effective global sshd settings, the way sshd itself resolves them:
+
+      - keywords are case-insensitive
+      - `Include` is expanded in place (glob, lexical order), so the Ubuntu
+        default `Include /etc/ssh/sshd_config.d/*.conf` at the top of the file
+        lets a drop-in override the main file
+      - the first value obtained wins
+      - parsing stops at the first `Match` block, whose settings are conditional
+
+    Returns {lowercase keyword: (keyword as written, value, file it came from)}.
+    Comment text, whole-line or trailing, is discarded and never reaches a model.
     """
-    values: dict[str, str] = {}
+    seen: dict[str, tuple[str, str, str]] = {} if _seen is None else _seen
     p = Path(path)
-    if not p.is_file():
-        return values
+    if _depth > 8 or not p.is_file():
+        return seen
     try:
         lines = p.read_text(errors="replace").splitlines()
     except OSError:
-        return values
+        return seen
+    root = os.environ.get("HARDENCTL_ROOT", "")
     for line in lines:
         line = line.strip()
         if not line or line.startswith("#"):
             continue
-        m = re.match(r"^(\w+)\s+(.+)$", line)
+        m = re.match(r"^(\w+)(?:\s*=\s*|\s+)(.+)$", line)
         if not m:
             continue
-        key, val = m.group(1), m.group(2).strip()
-        if key not in values:
-            values[key] = val
-    return values
+        key, val = m.group(1), _strip_comment(m.group(2))
+        low = key.lower()
+        if low == "match":
+            break
+        if low == "include":
+            for pattern in val.split():
+                pat = pattern if pattern.startswith("/") else "/etc/ssh/" + pattern
+                for hit in sorted(glob.glob(root + pat)):
+                    read_sshd_effective(hit, seen, _depth + 1)
+            continue
+        if low not in seen:
+            seen[low] = (key, val, str(p))
+    return seen
+
+
+def read_sshd_config(path: str = "/etc/ssh/sshd_config") -> dict[str, str]:
+    """Effective directives as {keyword as written: value}. See read_sshd_effective."""
+    return {k: v for k, v, _ in read_sshd_effective(path).values()}
 
 
 def collect_sshd(path: str = "/etc/ssh/sshd_config") -> list[Finding]:
     findings: list[Finding] = []
     if not Path(path).is_file():
         return findings
-    values = read_sshd_config(path)
-    for directive, (want, sev) in SSHD_CHECKS.items():
-        current = values.get(directive)
-        if current is None:
+    effective = read_sshd_effective(path)
+    for directive, (want, compliant, sev) in SSHD_CHECKS.items():
+        hit = effective.get(directive.lower())
+        if hit is None:
             continue
-        if current.strip().lower() != want.lower():
+        _, current, source = hit
+        if not compliant(current.strip().lower()):
             findings.append(Finding(
                 id=f"sshd-{directive.lower()}",
                 category="config", severity=sev,
                 title=f"sshd: {directive} is {current}",
-                detail=f"CIS-recommended value is {want}",
-                path=path, directive=directive, current_value=current,
+                detail=f"CIS-recommended value is {want}"
+                       + (f"; set in {source}" if source != path else ""),
+                # the file the effective value came from, so a fix edits the
+                # file sshd actually reads it from
+                path=source, directive=directive, current_value=current,
             ))
     return findings
 
@@ -232,8 +281,12 @@ def collect_permissions() -> list[Finding]:
         "/etc/passwd": 0o644, "/etc/group": 0o644,
         "/etc/ssh/sshd_config": 0o600,
     }
+    # HARDENCTL_ROOT prefixes the paths for the sandboxed test and eval runs;
+    # it is unset in production.
+    root = os.environ.get("HARDENCTL_ROOT", "")
     findings: list[Finding] = []
-    for path, want in expected.items():
+    for rel, want in expected.items():
+        path = root + rel
         p = Path(path)
         if not p.exists():
             continue

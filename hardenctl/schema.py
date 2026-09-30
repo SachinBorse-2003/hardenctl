@@ -122,7 +122,7 @@ class Explanation(BaseModel):
 # without loosening the rule itself — the regex below never changes.
 TEST_ROOT = os.environ.get("HARDENCTL_ROOT", "")
 
-_SAFE_PATH = re.compile(r"^/(?:etc|usr|var|opt|srv|boot)(?:/[\w.@+-]+)*/?$")
+_SAFE_PATH = re.compile(r"^/(?:etc|usr|var|opt|srv|boot)(?:/[\w.@+-]+)*/?$", re.ASCII)
 
 
 def _rel(path: str) -> str:
@@ -131,9 +131,12 @@ def _rel(path: str) -> str:
     if root and path.startswith(root):
         return path[len(root):] or "/"
     return path
-_UNIT_NAME = re.compile(r"^[\w.@-]+\.(service|socket|timer|target)$")
-_DIRECTIVE = re.compile(r"^[A-Za-z][\w.-]*$")
-_SYSCTL_KEY = re.compile(r"^[a-z][\w.]*$")
+# ASCII only. Python's \w matches any Unicode letter, so without re.ASCII a
+# directive spelled with a Cyrillic 'о' parses, slips past every table keyed
+# on the Latin spelling, and leaves sshd with a line it refuses to start on.
+_UNIT_NAME = re.compile(r"^[\w.@-]+\.(service|socket|timer|target)$", re.ASCII)
+_DIRECTIVE = re.compile(r"^[A-Za-z][\w.-]*$", re.ASCII)
+_SYSCTL_KEY = re.compile(r"^[a-z][\w.]*$", re.ASCII)
 _PKG_NAME = re.compile(r"^[a-z0-9][a-z0-9.+-]+$")
 
 

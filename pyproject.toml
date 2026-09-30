@@ -4,13 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hardenctl"
-version = "0.1.0"
+version = "1.0.0"
 description = "Agentic Linux hardening with schema-constrained plans and transactional rollback"
 requires-python = ">=3.10"
 dependencies = ["psutil>=5.9", "pydantic>=2.0", "typer>=0.9", "rich>=13.0", "pyyaml>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
 
 [project.scripts]
 hardenctl = "hardenctl.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["hardenctl*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

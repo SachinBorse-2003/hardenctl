@@ -1,6 +1,6 @@
 # Intent demo: six commands, one story
 
-Run from `~/hardenctl` on the lab VM. It takes about six minutes.
+Run from the repo (`~/Desktop/HardenCTL/hardenctl`) on the lab VM. It takes about six minutes.
 
 **Ordering rule:** run `intent init` *before* starting the file server.
 Otherwise the draft declares port 8000 and it shows INTENDED instead of NEW.

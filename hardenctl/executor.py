@@ -105,22 +105,33 @@ def backup_file(run_id: str, path: str) -> str | None:
     every action silently destroys the original.
     """
     src = Path(path)
-    if not src.is_file():
-        return None
     dest = backup_dir(run_id) / Path(path).relative_to(Path(path).anchor)
-    if dest.exists():
+    absent = _absent_marker(dest)
+    if dest.exists() or absent.exists():
         return str(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
+    if not src.is_file():
+        # The run is about to CREATE this file. Record that, so rollback
+        # deletes it rather than leaving a file the host never had.
+        absent.touch()
+        return None
     shutil.copy2(src, dest)
     return str(dest)
 
 
+def _absent_marker(dest: Path) -> Path:
+    return dest.with_name(dest.name + ".hardenctl-absent")
+
+
 def restore_file(run_id: str, path: str) -> bool:
     src = backup_dir(run_id) / Path(path).relative_to(Path(path).anchor)
-    if not src.is_file():
-        return False
-    shutil.copy2(src, path)
-    return True
+    if src.is_file():
+        shutil.copy2(src, path)
+        return True
+    if _absent_marker(src).exists():
+        Path(path).unlink(missing_ok=True)
+        return True
+    return False
 
 
 # --------------------------------------------------------------------------
@@ -165,12 +176,66 @@ def set_directive(path: str, directive: str, value: str) -> None:
     p.write_text("\n".join(lines) + "\n")
 
 
+def proc_sys() -> Path:
+    """
+    Root of the sysctl tree. HARDENCTL_PROC_SYS points it at a sandbox so the
+    eval harness can exercise sysctl apply and rollback without root.
+    """
+    return Path(os.environ.get("HARDENCTL_PROC_SYS", "/proc/sys"))
+
+
+def sysctl_path(key: str) -> Path:
+    return proc_sys() / key.replace(".", "/")
+
+
 def read_sysctl(key: str) -> str | None:
-    proc = Path("/proc/sys") / key.replace(".", "/")
+    proc = sysctl_path(key)
     try:
         return proc.read_text().strip()
     except OSError:
         return None
+
+
+def sysctl_persist_file() -> Path:
+    """Where applied sysctls are persisted, so they survive a reboot."""
+    return Path(os.environ.get("HARDENCTL_ROOT", "") + "/etc/sysctl.d/99-hardenctl.conf")
+
+
+def persist_sysctl(run_id: str, key: str, value: str) -> str:
+    """
+    Write `key = value` into 99-hardenctl.conf, backed up on first touch like
+    any other file. Skipped (not failed) when /etc/sysctl.d does not exist:
+    the runtime change still stands, and we never create system directories.
+    """
+    f = sysctl_persist_file()
+    if not f.parent.is_dir():
+        return "not persisted: /etc/sysctl.d absent"
+    backup_file(run_id, str(f))
+    lines = f.read_text().splitlines() if f.is_file() else [
+        "# managed by hardenctl — every line is reverted by `hardenctl rollback`"]
+    pat = re.compile(rf"^\s*{re.escape(key)}\s*=")
+    lines = [ln for ln in lines if not pat.match(ln)] + [f"{key} = {value}"]
+    f.write_text("\n".join(lines) + "\n")
+    return f"persisted to {f.name}"
+
+
+def _is_sshd_file(path: str) -> bool:
+    return path.endswith("/etc/ssh/sshd_config") or "/etc/ssh/sshd_config.d/" in path
+
+
+def sshd_syntax_error() -> str | None:
+    """
+    `sshd -t` on the live configuration. A config sshd cannot parse is a
+    lock-out at the next restart, so the step fails and the run reverts.
+    Skipped in the sandbox and where sshd is not installed.
+    """
+    if os.environ.get("HARDENCTL_ROOT") or not shutil.which("sshd"):
+        return None
+    try:
+        r = subprocess.run(["sshd", "-t"], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError) as e:
+        return f"sshd -t could not run: {e}"
+    return None if r.returncode == 0 else (r.stderr.strip() or "sshd -t failed")[:200]
 
 
 # --------------------------------------------------------------------------
@@ -231,10 +296,17 @@ def execute(action: Action, run_id: str) -> StepResult:
     inv = capture_inverse(action)
     description = simulate(action)   # captured pre-change
 
+    path = getattr(action, "path", None)
+    if path is not None and Path(path).is_symlink():
+        return StepResult(action.id, k, "failed", f"{path} is a symlink; refusing to follow it")
+
     try:
         if k == "set_config_directive":
             backup_file(run_id, action.path)
             set_directive(action.path, action.directive, action.value)
+            if _is_sshd_file(action.path) and (err := sshd_syntax_error()):
+                restore_file(run_id, action.path)
+                return StepResult(action.id, k, "failed", f"sshd -t rejected the change: {err}")
 
         elif k == "set_file_mode":
             p = Path(action.path)
@@ -244,10 +316,11 @@ def execute(action: Action, run_id: str) -> StepResult:
             os.chmod(action.path, int(action.mode, 8))
 
         elif k == "set_sysctl":
-            proc = Path("/proc/sys") / action.key.replace(".", "/")
+            proc = sysctl_path(action.key)
             if not proc.exists():
                 return StepResult(action.id, k, "skipped", "sysctl key absent")
             proc.write_text(action.value + "\n")
+            description += f" ({persist_sysctl(run_id, action.key, action.value)})"
 
         elif k in ("disable_service", "mask_service"):
             verb = "disable" if k == "disable_service" else "mask"
@@ -285,9 +358,10 @@ def revert(inv: dict, run_id: str) -> bool:
             os.chmod(inv["path"], int(inv["mode"], 8))
             return True
         if k == "set_sysctl":
+            restore_file(run_id, str(sysctl_persist_file()))
             if inv.get("value") is None:
                 return True
-            proc = Path("/proc/sys") / inv["key"].replace(".", "/")
+            proc = sysctl_path(inv["key"])
             proc.write_text(inv["value"] + "\n")
             return True
         if k == "enable_service":

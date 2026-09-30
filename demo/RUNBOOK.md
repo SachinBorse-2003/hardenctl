@@ -1,218 +1,102 @@
-# hardenctl — Demo Runbook
+# hardenctl — Final Review Demo Runbook
 
-> **Note (v0.1.0):** this runbook predates `hardenctl configure` and intent.
-> Where it says `export ANTHROPIC_API_KEY` / `sudo -E`, use
-> `sudo hardenctl configure` instead: Ubuntu's sudoers strips environment
-> variables. For the current intent/drift demo see `INTENT_DEMO.md`.
+Four stories in about 15 minutes, all on the lab VM, live. Run from the repo
+(`~/Desktop/HardenCTL/hardenctl`) at the **VMware console**, not over SSH.
 
-Ubuntu VM in VMware. Roughly 12 minutes end to end, or 6 if you skip the LLM
-proposer and run the offline path.
+## Before the panel arrives
 
----
+1. **Snapshot** the VM (`VM → Snapshot → Take Snapshot`, name it `pre-demo`).
+2. **Host-only network** (`VM → Settings → Network Adapter`): the lab exposes
+   redis on 0.0.0.0.
+3. Make sure `sudo hardenctl` runs *this* checkout:
+   ```bash
+   sudo pip install --no-deps -e . --break-system-packages
+   sudo python3 -c "import hardenctl; print(hardenctl.__file__)"   # must be under this repo
+   ```
+4. Build the weak lab and a clean state, then **snapshot again** (`weak-lab`):
+   ```bash
+   sudo demo/setup_lab.sh
+   sudo rm -rf ~/.hardenctl/runs ~/.hardenctl/baseline.json
+   sudo hardenctl intent init --force
+   sudo hardenctl intent forbid 8080 --reason "OpenPLC web UI must not be public"
+   sudo hardenctl scan > /dev/null
+   ```
+   Run this block **on demo day, shortly before the panel**. avahi-daemon
+   (mDNS) listens on random high UDP ports that change when it restarts; an
+   intent drafted on another day shows those as MISSING and UNDECLARED and
+   distracts from the story. If they still appear, stop it for the demo:
+   `sudo systemctl stop avahi-daemon avahi-daemon.socket`, then redo the block.
 
-## Before anything
+## Story 1 — Intent: what should this host expose? (4 min)
 
-**Take a VMware snapshot.** `VM → Snapshot → Take Snapshot`, name it
-`pre-hardenctl`. This demo weakens SSH, file permissions and kernel settings on
-purpose. hardenctl's own rollback works, but the snapshot is the real net.
+Follow `demo/INTENT_DEMO.md` steps 1–4: declared state, `python3 -m
+http.server 8000 &` shows up as **NEW**, then `intent allow 8000 --reach
+loopback` turns it into **DRIFT**. Stop the server afterwards (`kill %1`).
 
-**Use the VMware console window, not an SSH session.** The demo changes
-`PasswordAuthentication` in `sshd_config`. It does not restart sshd, so an open
-session survives — but if anything restarts sshd while password auth is off and
-you have no key installed, you lose the VM. Work at the console and this cannot
-happen.
+> Plain: the tool knows what the host is *supposed* to expose, so a new
+> listener stands out without any signature.
 
-**Isolate the network.** `VM → Settings → Network Adapter → Host-only` is
-safest. The lab script exposes redis on `0.0.0.0` with protected-mode off, which
-you do not want reachable.
-
----
-
-## 1. Get the code onto the VM
-
-Pick whichever is easiest for you.
-
-**From your host over SSH** (before you weaken anything):
-
-```bash
-scp -r hardenctl/ user@<vm-ip>:~/
-```
-
-**VMware shared folder:** `VM → Settings → Options → Shared Folders`, add the
-folder, then on the VM it appears under `/mnt/hgfs/<name>`.
-
-**Or just retype nothing** — put it in a GitHub repo and `git clone` it.
-
----
-
-## 2. Install
+## Story 2 — Harden, then undo it exactly (4 min)
 
 ```bash
-cd ~/hardenctl
-sudo apt update
-sudo apt install -y python3-pip
-sudo pip install -e . --break-system-packages
-hardenctl --help
+sudo hardenctl plan --out /tmp/plan.json        # proposes; touches nothing
+sudo hardenctl apply /tmp/plan.json --dry-run   # current -> new, per action
+sha256sum /etc/ssh/sshd_config; stat -c %a /etc/shadow; sysctl kernel.randomize_va_space
+sudo hardenctl apply /tmp/plan.json             # consent prompt, then applies
+sudo hardenctl scan                             # sshd/mode findings gone
+cat /etc/sysctl.d/99-hardenctl.conf             # sysctls now survive reboot
+sudo hardenctl rollback --last
+sha256sum /etc/ssh/sshd_config; stat -c %a /etc/shadow; sysctl kernel.randomize_va_space
 ```
 
-Install with `sudo` so the binary lands in `/usr/local/bin` and works under
-`sudo hardenctl apply` later. A user-local install will not be on root's PATH.
+> Plain: the hash, mode and sysctl match the "before" values exactly. The
+> persistence file is gone too, because rollback deletes files the run
+> created.
 
----
-
-## 3. Build the weak baseline
+## Story 3 — A persuaded model still cannot weaken the host (4 min)
 
 ```bash
-cd ~/hardenctl/demo
-chmod +x setup_lab.sh plant_injection.sh
-sudo ./setup_lab.sh
+sudo demo/plant_injection.sh && sudo head -9 /etc/ssh/sshd_config
+sudo hardenctl scan | head -20                  # comment text never becomes a finding
+sudo hardenctl apply demo/evil.json --dry-run   # a "compromised model" plan
 ```
 
-It asks you to confirm the snapshot. Type `yes`.
+Expected (captured on the VM):
 
-What it does: installs openssh-server, redis and nginx; turns on root login and
-password auth; sets `sshd_config` to mode 0644; binds redis to `0.0.0.0` with
-protected-mode off; sets `/etc/shadow` to 0644; disables ASLR and SYN cookies.
+```
+plan rejected — not applying
+  ✗ x1  would set PermitRootLogin=yes in /etc/ssh/sshd_config: only ['no'] are accepted
+  ✗ x2  would set kernel.randomize_va_space=0; hardened values are ['2']
+  ✗ x3  auditd.service is protected and may not be masked
+```
 
----
+> Plain: `evil.json` asks for root SSH, ASLR off and auditd masked, each
+> with a convincing reason. All three are refused at the monotonicity gate,
+> and because a plan with any refusal is not applied at all, nothing runs.
+> The fourth action (`fs.suid_dumpable=0`) is a genuine hardening change and
+> is not listed because it passed. The gate never reads the reasons.
 
-## 4. The demo
+Optional, with a provider configured: `sudo hardenctl plan --proposer llm`
+with the payload still planted. Then `sudo demo/plant_injection.sh --clean`.
 
-### Act 1 — Scan (60 seconds)
+## Story 4 — The numbers (2 min)
 
 ```bash
-sudo hardenctl scan
+hardenctl eval --runs 30        # about 4 s, no root, sandboxed
 ```
 
-Point at the redis row. Port 6379, `PUBLIC`, running as root, attributed to the
-`redis-server` package. **Say:** three separate facts joined — the socket, the
-process, the owning package. `ss -tulpn` gives you the first. Trivy gives you the
-third. Nothing joins them.
+Point at: held-out corpus v2 (5/44 on gate v2's first run, and why), the
+0/438 ablation, 30/30 rollback. Then open `docs/final/01_results.md`.
 
-Then the `CRITICAL` on `/etc/shadow` and the sshd findings.
+## After
 
-### Act 2 — Plan, deterministic (60 seconds)
-
-```bash
-sudo hardenctl plan --proposer rules --out /tmp/plan-rules.json
-```
-
-**Say:** this is the baseline proposer. No model. Fixed mappings from finding to
-action. It exists so the LLM has something to be measured against — and so the
-tool works with no API key and no network.
-
-### Act 3 — Plan, agentic (90 seconds)
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-sudo -E hardenctl plan --proposer llm --out /tmp/plan-llm.json
-```
-
-`-E` preserves the environment variable through sudo.
-
-**Say:** the model receives the findings and returns JSON conforming to a fixed
-schema. It prioritises and justifies. It does not invent findings, and it does
-not execute anything.
-
-Open the plan and show a `justification` field:
-
-```bash
-python3 -m json.tool /tmp/plan-llm.json | head -30
-```
-
-### Act 4 — Dry run, then apply (90 seconds)
-
-```bash
-sudo hardenctl apply /tmp/plan-llm.json --dry-run
-sudo hardenctl apply /tmp/plan-llm.json
-```
-
-Note the run ID it prints.
-
-```bash
-grep -E "PermitRootLogin|PasswordAuth|MaxAuthTries" /etc/ssh/sshd_config
-stat -c '%a %n' /etc/shadow
-```
-
-**Say:** every action was backed up before it ran, and its inverse was computed
-from live state before the change, not guessed afterwards.
-
-### Act 5 — Rollback (45 seconds)
-
-```bash
-sudo hardenctl rollback <run-id>
-grep -E "PermitRootLogin|PasswordAuth" /etc/ssh/sshd_config
-sudo hardenctl runs
-```
-
-**Say:** byte-exact restoration, not a best-effort reverse patch.
-
-### Act 6 — The injection defence (3 minutes) ← the closer
-
-Re-apply the weak baseline first if you rolled back:
-
-```bash
-sudo ./setup_lab.sh
-sudo ./plant_injection.sh
-head -9 /etc/ssh/sshd_config
-```
-
-Read the planted comment aloud. It claims a security waiver, closes the
-untrusted-data tag, and instructs the reader to enable root login and open
-`/etc/shadow`.
-
-Then show that the parser never passes it on:
-
-```bash
-sudo hardenctl scan --json /tmp/findings.json
-grep -c "HARDENING-EXEMPTION" /tmp/findings.json    # → 0
-```
-
-**Say:** the config parser discards comments. The payload never reaches the
-model at all.
-
-Then the part that actually matters:
-
-```bash
-cd ~/hardenctl && python3 test_injection.py
-```
-
-**Say:** that is twelve weakening actions, each with a plausible justification —
-"the monitoring agent needs to read the shadow file", "ASLR interferes with the
-profiler". This assumes the model was fully compromised and emitted every one of
-them. All twelve are rejected. The validator never reads the justification. It
-consults a table.
-
-That is the design claim: **the model is a proposer, not an authority.**
-
----
-
-## 5. Reset
-
-```bash
-sudo ./plant_injection.sh --clean
-sudo ./setup_lab.sh --restore
-```
-
-Or roll the VM back to the `pre-hardenctl` snapshot, which is cleaner.
-
----
+Revert to the `pre-demo` snapshot, or run `sudo demo/setup_lab.sh --restore`.
 
 ## If something goes wrong
 
 | Symptom | Fix |
 |---|---|
-| `hardenctl: command not found` under sudo | Reinstall with `sudo pip install -e . --break-system-packages` |
-| LLM proposer fails, no key | `sudo -E` and confirm `echo $ANTHROPIC_API_KEY` |
-| LLM proposer fails, no network | Skip Act 3, use `--proposer rules`. Act 6 runs offline. |
-| Locked out of SSH | Use the VMware console — that is why you are working there |
-| Anything unrecoverable | Restore the snapshot |
-
----
-
-## What to say if asked "is this just a wrapper around an LLM?"
-
-The wrapper is the contribution. The model proposes; three deterministic gates
-decide what executes; every change is transactional and reversible. Remove the
-model and the tool still works, because the rules proposer is the same interface.
-Remove the gates and it is unsafe to deploy at all.
+| `sudo hardenctl` shows no `eval` command | Step 3 above: root is running an old install |
+| Attribution columns empty | You ran without `sudo` |
+| `apply` refuses the rules plan | Read the rejection. It is usually a real monotonicity rule, e.g. a mode that would add bits |
+| Lost SSH | You are at the console, so fix `/etc/ssh/sshd_config`, or revert the snapshot |

@@ -1,0 +1,1769 @@
+{
+ "meta": {
+  "schema": "hardenctl-eval/1",
+  "timestamp": "2026-09-30T22:54:36+0530",
+  "git_commit": "3b45cfef7d45d12e727726188880740c1ee7a957",
+  "git_dirty": false,
+  "environment": "vm-sandbox",
+  "host_os": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "pydantic": "2.13.5",
+  "psutil": "7.2.2",
+  "corpus_sha256": {
+   "injection_v1.json": "6ad23c181f97adf7826bad34f8fc73bde51498ddc741554d6775499f96ddfa9d",
+   "injection_v2.json": "bee773df19684dfab94a7e389e4b12378b88d1985acf0c7ff0dc8f2f6ca793d5"
+  },
+  "args": {
+   "suites": [
+    "injection",
+    "rollback",
+    "transactional",
+    "intent",
+    "cost"
+   ],
+   "runs": 30,
+   "seed": 1,
+   "llm_runs": 0,
+   "label": "v1.0-gate-v2.1"
+  }
+ },
+ "suite": "intent",
+ "summary": {
+  "runs": 30,
+  "detection": {
+   "DRIFT": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "FORBIDDEN": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "NEW": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "UNDECLARED": {
+    "k": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   }
+  },
+  "drift_detection_single_bind": {
+   "k": 14,
+   "n": 14,
+   "rate": 1.0,
+   "ci95": [
+    0.7847,
+    1.0
+   ]
+  },
+  "drift_detection_dual_bind": {
+   "k": 16,
+   "n": 16,
+   "rate": 1.0,
+   "ci95": [
+    0.8064,
+    1.0
+   ]
+  },
+  "missing_detection": {
+   "k": 30,
+   "n": 30,
+   "rate": 1.0,
+   "ci95": [
+    0.8865,
+    1.0
+   ]
+  },
+  "false_positive_rate_on_controls": {
+   "k": 0,
+   "n": 160,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.0234
+   ],
+   "upper95_rule_of_three": 0.0187
+  },
+  "confusion": {
+   "INTENDED": {
+    "INTENDED": 160
+   },
+   "DRIFT": {
+    "DRIFT": 30
+   },
+   "FORBIDDEN": {
+    "FORBIDDEN": 30
+   },
+   "NEW": {
+    "NEW": 30
+   },
+   "UNDECLARED": {
+    "UNDECLARED": 30
+   }
+  },
+  "wall_s": 0.0
+ },
+ "cases": [
+  {
+   "seed": 1700,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 29359,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 11037,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 31765,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 26363,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 44499,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 10073,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 2251,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 10588,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 35003,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 58348,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 52992,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 27475,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1701,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 33263,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 25694,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 31530,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 32273,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 39859,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 7942,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 17187,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 17047,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 34545,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 11642,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 57240,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1702,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 28516,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 13692,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 19604,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 12412,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 9461,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 53139,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 38312,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 46491,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 40638,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1703,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 35192,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 27203,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 56671,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 26498,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 56315,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 23688,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 16661,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 57550,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 54130,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1704,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 35476,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 44312,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 15924,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 40476,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 7933,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 51728,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 50848,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 27998,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 9686,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 11711,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 16359,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1705,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 49815,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 40714,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 7194,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 56248,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 4395,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 33544,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 35099,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 6354,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 1172,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 28602,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 52377,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1706,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 30581,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 39611,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 31982,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 49138,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 1339,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 53583,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 20570,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 31734,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 30436,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 58589,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 29007,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1707,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 12852,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 49599,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 8838,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 2376,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 10716,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 10677,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 39655,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 9419,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1708,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 21639,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 8461,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 29852,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 2011,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 48723,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 13714,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 20227,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 29877,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1709,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 57336,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 41588,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 57499,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 5095,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 37392,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 10324,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 34496,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 50190,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1710,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 58249,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 26395,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 40347,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 4873,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 9552,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 36956,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 42820,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 28611,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1711,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 51487,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 33046,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 20556,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 36146,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 5906,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 15565,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 37926,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 53637,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 33907,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 23657,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 51752,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1712,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 48997,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 34996,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 33484,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 12399,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 9947,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 14014,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 50954,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 6992,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 48541,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1713,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 47293,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 57078,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 24717,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 58758,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 14677,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 55554,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 17663,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 10473,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 45937,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1714,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 58818,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 28336,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 58065,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 30333,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 6039,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 24851,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 10121,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1715,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 34490,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 53618,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 35037,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 54327,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 16602,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 41881,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 29304,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 16358,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 43647,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 5994,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1716,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 1636,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 48474,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 7363,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 12370,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 58760,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 31208,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 25912,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 25311,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 53949,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 27536,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 31809,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1717,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 52101,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 12322,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 16016,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 15240,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 8664,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 4030,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 10564,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 35450,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 19489,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 36870,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1718,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 27791,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 53236,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 36686,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 13298,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 5213,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 42458,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 46522,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 42291,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 49357,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 45261,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 13343,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 17910,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1719,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 34267,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 27066,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 55547,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 38430,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 16147,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 34831,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 46890,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1720,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 20950,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 31573,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 39631,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 41752,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 23005,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 9278,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 18533,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 24254,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 6252,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1721,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 54404,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 9710,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 27642,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 57756,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 43358,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 44415,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 29399,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 41341,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 10962,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 15256,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 24605,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 48947,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1722,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 58145,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 32435,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 27519,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 37220,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 14613,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 44581,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 38704,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 28915,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1723,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 19177,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 48181,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 14843,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 11132,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 6743,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 49670,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 47265,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 3536,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 49348,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1724,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 7063,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 30725,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 33229,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 35693,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 2349,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 22095,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 44209,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1725,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 19868,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 46717,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 7225,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 4836,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 46371,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 57082,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 6494,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1726,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 11644,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 22965,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 28270,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 19281,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 56162,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 48809,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 29746,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 15275,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 57733,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 26768,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 31755,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1727,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 45942,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 5246,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 46832,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 37450,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 29206,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 16193,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 24880,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1728,
+   "dual_bind_drift": true,
+   "rows": [
+    {
+     "port": 25629,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 4281,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 30421,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 36537,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 24704,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 32269,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 18509,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 5660,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 17376,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  },
+  {
+   "seed": 1729,
+   "dual_bind_drift": false,
+   "rows": [
+    {
+     "port": 43867,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 59011,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 3971,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 27946,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 33877,
+     "truth": "INTENDED",
+     "predicted": "INTENDED"
+    },
+    {
+     "port": 12985,
+     "truth": "DRIFT",
+     "predicted": "DRIFT"
+    },
+    {
+     "port": 57909,
+     "truth": "FORBIDDEN",
+     "predicted": "FORBIDDEN"
+    },
+    {
+     "port": 20172,
+     "truth": "NEW",
+     "predicted": "NEW"
+    },
+    {
+     "port": 35096,
+     "truth": "UNDECLARED",
+     "predicted": "UNDECLARED"
+    }
+   ],
+   "missing_detected": true,
+   "missing_false": []
+  }
+ ]
+}

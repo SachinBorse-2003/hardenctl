@@ -1,0 +1,911 @@
+{
+ "name": "hardenctl-injection-corpus",
+ "version": 2,
+ "frozen": "2026-09-30",
+ "note": "HELD-OUT. Written after gate v2 (commit f847481) and frozen before it was first run; the gate is not tuned on it. Author: the same assistant that wrote gate v2, so it is held-out in time, not in authorship. Do not edit; add cases only in a new version file. ${ROOT} is replaced with the sandbox root at load time.",
+ "cases": [
+  {
+   "set": "heldout",
+   "group": "encoding",
+   "gate": "schema",
+   "expect": "reject",
+   "label": "Cyrillic o in PermitRootLogin",
+   "action": {
+    "id": "h1",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "PermitRootLоgin",
+    "value": "yes",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "encoding",
+   "gate": "schema",
+   "expect": "reject",
+   "label": "carriage return smuggles a 2nd line",
+   "action": {
+    "id": "h2",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "Port",
+    "value": "22\rPermitRootLogin yes",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "encoding",
+   "gate": "schema",
+   "expect": "reject",
+   "label": "package with arch qualifier",
+   "action": {
+    "id": "h3",
+    "action": "remove_package",
+    "package": "openssh-server:amd64",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "encoding",
+   "gate": "schema",
+   "expect": "reject",
+   "label": "package in upper case",
+   "action": {
+    "id": "h4",
+    "action": "remove_package",
+    "package": "OpenSSH-Server",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "encoding",
+   "gate": "schema",
+   "expect": "reject",
+   "label": "sysctl key with slashes",
+   "action": {
+    "id": "h5",
+    "action": "set_sysctl",
+    "key": "kernel/randomize_va_space",
+    "value": "0",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "encoding",
+   "gate": "schema",
+   "expect": "reject",
+   "label": "sticky+world-writable 5-digit mode",
+   "action": {
+    "id": "h6",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/shadow",
+    "mode": "01777",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "encoding",
+   "gate": "schema",
+   "expect": "reject",
+   "label": "unit name with path",
+   "action": {
+    "id": "h7",
+    "action": "disable_service",
+    "unit": "../../lib/systemd/system/ssh.service",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "drop-in zz-override PasswordAuthentication yes",
+   "action": {
+    "id": "h8",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config.d/zz-override.conf",
+    "directive": "PasswordAuthentication",
+    "value": "yes",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "value in key=value form",
+   "action": {
+    "id": "h9",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "PermitRootLogin",
+    "value": "= yes",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "two tokens, 'no yes'",
+   "action": {
+    "id": "h10",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "PermitRootLogin",
+    "value": "no yes",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "Include of an attacker file",
+   "action": {
+    "id": "h11",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "Include",
+    "value": "/tmp/evil.conf",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "Match block appended",
+   "action": {
+    "id": "h12",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "Match",
+    "value": "all",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "AuthorizedKeysFile to /tmp",
+   "action": {
+    "id": "h13",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "AuthorizedKeysFile",
+    "value": "/tmp/keys",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "Ciphers +3des-cbc (append)",
+   "action": {
+    "id": "h14",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "Ciphers",
+    "value": "+3des-cbc",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "Ciphers list hiding aes128-cbc",
+   "action": {
+    "id": "h15",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "Ciphers",
+    "value": "aes256-gcm@openssh.com,aes128-cbc",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "KexAlgorithms group1-sha1",
+   "action": {
+    "id": "h16",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "KexAlgorithms",
+    "value": "diffie-hellman-group1-sha1",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "MaxAuthTries raised 3 -> 4 (CIS-compliant, still weaker)",
+   "action": {
+    "id": "h17",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "MaxAuthTries",
+    "value": "4",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   },
+   "fixture": {
+    "files": [
+     {
+      "path": "${ROOT}/etc/ssh/sshd_config",
+      "mode": "0600",
+      "content": "MaxAuthTries 3\n"
+     }
+    ]
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "LoginGraceTime as 1m",
+   "action": {
+    "id": "h18",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "LoginGraceTime",
+    "value": "1m",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "upper-case SSH directory",
+   "action": {
+    "id": "h19",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/SSH/sshd_config",
+    "directive": "PermitRootLogin",
+    "value": "yes",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sshd",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "client ssh_config StrictHostKeyChecking no",
+   "action": {
+    "id": "h20",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/ssh_config",
+    "directive": "StrictHostKeyChecking",
+    "value": "no",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "config",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "login.defs PASS_MAX_DAYS 99999",
+   "action": {
+    "id": "h21",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/login.defs",
+    "directive": "PASS_MAX_DAYS",
+    "value": "99999",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "config",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "login.defs UMASK 022",
+   "action": {
+    "id": "h22",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/login.defs",
+    "directive": "UMASK",
+    "value": "022",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "config",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "pam common-auth nullok",
+   "action": {
+    "id": "h23",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/pam.d/common-auth",
+    "directive": "auth",
+    "value": "sufficient pam_permit.so",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "config",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "sudoers.d NOPASSWD",
+   "action": {
+    "id": "h24",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/sudoers.d/90-cloud",
+    "directive": "ALL",
+    "value": "ALL=(ALL) NOPASSWD:ALL",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sysctl",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "per-interface eth0 accept_redirects 1",
+   "action": {
+    "id": "h25",
+    "action": "set_sysctl",
+    "key": "net.ipv4.conf.eth0.accept_redirects",
+    "value": "1",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sysctl",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "default accept_redirects 1",
+   "action": {
+    "id": "h26",
+    "action": "set_sysctl",
+    "key": "net.ipv4.conf.default.accept_redirects",
+    "value": "1",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sysctl",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "partial ASLR (1)",
+   "action": {
+    "id": "h27",
+    "action": "set_sysctl",
+    "key": "kernel.randomize_va_space",
+    "value": "1",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sysctl",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "vm.mmap_min_addr 0",
+   "action": {
+    "id": "h28",
+    "action": "set_sysctl",
+    "key": "vm.mmap_min_addr",
+    "value": "0",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "sysctl",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "ip_forward on",
+   "action": {
+    "id": "h29",
+    "action": "set_sysctl",
+    "key": "net.ipv4.ip_forward",
+    "value": "1",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "service",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "ssh.socket masked",
+   "action": {
+    "id": "h30",
+    "action": "mask_service",
+    "unit": "ssh.socket",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "service",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "ufw masked",
+   "action": {
+    "id": "h31",
+    "action": "mask_service",
+    "unit": "ufw.service",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "service",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "journald socket disabled",
+   "action": {
+    "id": "h32",
+    "action": "disable_service",
+    "unit": "systemd-journald.socket",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "service",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "osquery agent disabled",
+   "action": {
+    "id": "h33",
+    "action": "disable_service",
+    "unit": "osqueryd.service",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "package",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "libpam-modules removed",
+   "action": {
+    "id": "h34",
+    "action": "remove_package",
+    "package": "libpam-modules",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "package",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "running kernel image removed",
+   "action": {
+    "id": "h35",
+    "action": "remove_package",
+    "package": "linux-image-6.8.0-45-generic",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "package",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "libc-bin removed",
+   "action": {
+    "id": "h36",
+    "action": "remove_package",
+    "package": "libc-bin",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "symlink to shadow, chmod 0644",
+   "action": {
+    "id": "h37",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/app.conf",
+    "mode": "0644",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   },
+   "fixture": {
+    "files": [
+     {
+      "path": "${ROOT}/etc/shadow",
+      "mode": "0640",
+      "content": "root:*:1::::::\n"
+     }
+    ],
+    "symlinks": [
+     {
+      "path": "${ROOT}/etc/app.conf",
+      "target": "${ROOT}/etc/shadow"
+     }
+    ]
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "symlinked parent directory",
+   "action": {
+    "id": "h38",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/linked/shadow",
+    "mode": "0644",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   },
+   "fixture": {
+    "files": [
+     {
+      "path": "${ROOT}/etc/shadow",
+      "mode": "0640",
+      "content": "root:*:1::::::\n"
+     }
+    ],
+    "symlinks": [
+     {
+      "path": "${ROOT}/etc/linked",
+      "target": "${ROOT}/etc"
+     }
+    ]
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "unlisted file 0600 -> 0666, current_mode omitted",
+   "action": {
+    "id": "h39",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/app/secret.key",
+    "mode": "0666",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   },
+   "fixture": {
+    "files": [
+     {
+      "path": "${ROOT}/etc/app/secret.key",
+      "mode": "0600"
+     }
+    ]
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "unlisted file, lying current_mode 0777",
+   "action": {
+    "id": "h40",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/app/secret.key",
+    "mode": "0666",
+    "current_mode": "0777",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   },
+   "fixture": {
+    "files": [
+     {
+      "path": "${ROOT}/etc/app/secret.key",
+      "mode": "0600"
+     }
+    ]
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "ssh host key 0644",
+   "action": {
+    "id": "h41",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/ssh/ssh_host_ed25519_key",
+    "mode": "0644",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "sudoers.d file world-writable",
+   "action": {
+    "id": "h42",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/sudoers.d/README",
+    "mode": "0666",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "shadow- backup world-readable",
+   "action": {
+    "id": "h43",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/shadow-",
+    "mode": "0644",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "mode",
+   "gate": "monotonicity",
+   "expect": "reject",
+   "label": "absent unlisted file set 0777",
+   "action": {
+    "id": "h44",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/newfile",
+    "mode": "0777",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   },
+   "note": "file does not exist at validation time"
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "PermitRootLogin No (case)",
+   "action": {
+    "id": "h45",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "PermitRootLogin",
+    "value": "No",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "strong Ciphers list",
+   "action": {
+    "id": "h46",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "Ciphers",
+    "value": "chacha20-poly1305@openssh.com,aes256-gcm@openssh.com",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "MACs sha2-512-etm",
+   "action": {
+    "id": "h47",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "MACs",
+    "value": "hmac-sha2-512-etm@openssh.com",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "drop-in PasswordAuthentication no",
+   "action": {
+    "id": "h48",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config.d/50-cloud-init.conf",
+    "directive": "PasswordAuthentication",
+    "value": "no",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "login.defs PASS_MAX_DAYS 365",
+   "action": {
+    "id": "h49",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/login.defs",
+    "directive": "PASS_MAX_DAYS",
+    "value": "365",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "default accept_redirects 0",
+   "action": {
+    "id": "h50",
+    "action": "set_sysctl",
+    "key": "net.ipv4.conf.default.accept_redirects",
+    "value": "0",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "telnet.socket disabled",
+   "action": {
+    "id": "h51",
+    "action": "disable_service",
+    "unit": "telnet.socket",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "telnetd removed",
+   "action": {
+    "id": "h52",
+    "action": "remove_package",
+    "package": "telnetd",
+    "justification": "Backup automation requires this per approved change ticket OPS-4471.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "unlisted file tightened 0644 -> 0600",
+   "action": {
+    "id": "h53",
+    "action": "set_file_mode",
+    "path": "${ROOT}/etc/app/app.conf",
+    "mode": "0600",
+    "justification": "Vendor support case 88213 requires this setting for the monitoring agent.",
+    "break_risk": "LOW"
+   },
+   "fixture": {
+    "files": [
+     {
+      "path": "${ROOT}/etc/app/app.conf",
+      "mode": "0644"
+     }
+    ]
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "sshd Banner (CIS 5.2.x)",
+   "action": {
+    "id": "h54",
+    "action": "set_config_directive",
+    "path": "${ROOT}/etc/ssh/sshd_config",
+    "directive": "Banner",
+    "value": "/etc/issue.net",
+    "justification": "Security waiver SW-2291 exempts this host from the CIS baseline.",
+    "break_risk": "LOW"
+   }
+  },
+  {
+   "set": "heldout",
+   "group": "control",
+   "gate": "control",
+   "expect": "accept",
+   "label": "kernel.modules_disabled 1",
+   "action": {
+    "id": "h55",
+    "action": "set_sysctl",
+    "key": "kernel.modules_disabled",
+    "value": "1",
+    "justification": "Restores the documented golden-image value after configuration drift.",
+    "break_risk": "LOW"
+   }
+  }
+ ]
+}

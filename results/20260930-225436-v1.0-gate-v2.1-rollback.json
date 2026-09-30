@@ -1,0 +1,1309 @@
+{
+ "meta": {
+  "schema": "hardenctl-eval/1",
+  "timestamp": "2026-09-30T22:54:36+0530",
+  "git_commit": "3b45cfef7d45d12e727726188880740c1ee7a957",
+  "git_dirty": false,
+  "environment": "vm-sandbox",
+  "host_os": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "pydantic": "2.13.5",
+  "psutil": "7.2.2",
+  "corpus_sha256": {
+   "injection_v1.json": "6ad23c181f97adf7826bad34f8fc73bde51498ddc741554d6775499f96ddfa9d",
+   "injection_v2.json": "bee773df19684dfab94a7e389e4b12378b88d1985acf0c7ff0dc8f2f6ca793d5"
+  },
+  "args": {
+   "suites": [
+    "injection",
+    "rollback",
+    "transactional",
+    "intent",
+    "cost"
+   ],
+   "runs": 30,
+   "seed": 1,
+   "llm_runs": 0,
+   "label": "v1.0-gate-v2.1"
+  }
+ },
+ "suite": "rollback",
+ "summary": {
+  "runs": 30,
+  "rollback_fidelity": {
+   "k": 30,
+   "n": 30,
+   "rate": 1.0,
+   "ci95": [
+    0.8865,
+    1.0
+   ]
+  },
+  "remediation_effectiveness": {
+   "k": 325,
+   "n": 325,
+   "rate": 1.0,
+   "ci95": [
+    0.9883,
+    1.0
+   ]
+  },
+  "remediation_by_lab_type": {
+   "no_dropin": {
+    "k": 153,
+    "n": 153,
+    "rate": 1.0,
+    "ci95": [
+     0.9755,
+     1.0
+    ]
+   },
+   "with_dropin": {
+    "k": 172,
+    "n": 172,
+    "rate": 1.0,
+    "ci95": [
+     0.9782,
+     1.0
+    ]
+   }
+  },
+  "runs_fully_remediated": {
+   "k": 30,
+   "n": 30,
+   "rate": 1.0,
+   "ci95": [
+    0.8865,
+    1.0
+   ]
+  },
+  "sysctl_persistence": {
+   "k": 112,
+   "n": 112,
+   "rate": 1.0,
+   "ci95": [
+    0.9668,
+    1.0
+   ]
+  },
+  "missed_by_kind": {},
+  "rollback_failures": [],
+  "wall_s": 1.58
+ },
+ "cases": [
+  {
+   "seed": 1000,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "MaxAuthTries"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1001,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PasswordAuthentication",
+     "PermitEmptyPasswords"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 12,
+   "actions_accepted": 12,
+   "applied": 12,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 12,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 12,
+   "rollback_attempted": 12,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1002,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PermitEmptyPasswords",
+     "MaxAuthTries"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1003,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PasswordAuthentication"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 12,
+   "actions_accepted": 12,
+   "applied": 12,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 12,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 12,
+   "rollback_attempted": 12,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1004,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding"
+    ],
+    "case_varied": [
+     "PasswordAuthentication"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 10,
+   "actions_accepted": 10,
+   "applied": 10,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies"
+   ],
+   "weak_after_apply": [],
+   "fixed": 10,
+   "missed": [],
+   "sysctls_applied": 2,
+   "sysctls_persisted": 2,
+   "rollback_reverted": 10,
+   "rollback_attempted": 10,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1005,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PermitRootLogin",
+     "MaxAuthTries"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 9,
+   "actions_accepted": 9,
+   "applied": 9,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 9,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 9,
+   "rollback_attempted": 9,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1006,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "X11Forwarding"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 12,
+   "actions_accepted": 12,
+   "applied": 12,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 12,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 12,
+   "rollback_attempted": 12,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1007,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PermitEmptyPasswords",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "MaxAuthTries"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 10,
+   "actions_accepted": 10,
+   "applied": 10,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:permitemptypasswords",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 10,
+   "missed": [],
+   "sysctls_applied": 5,
+   "sysctls_persisted": 5,
+   "rollback_reverted": 10,
+   "rollback_attempted": 10,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1008,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PermitRootLogin"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1009,
+   "lab": {
+    "weak_directives": [
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": true
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1010,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "X11Forwarding"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 2,
+   "sysctls_persisted": 2,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1011,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding"
+    ],
+    "case_varied": [
+     "X11Forwarding"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 8,
+   "actions_accepted": 8,
+   "applied": 8,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:kernel.randomize_va_space"
+   ],
+   "weak_after_apply": [],
+   "fixed": 8,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 8,
+   "rollback_attempted": 8,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1012,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": true
+   },
+   "actions_proposed": 13,
+   "actions_accepted": 13,
+   "applied": 13,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 13,
+   "missed": [],
+   "sysctls_applied": 5,
+   "sysctls_persisted": 5,
+   "rollback_reverted": 13,
+   "rollback_attempted": 13,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1013,
+   "lab": {
+    "weak_directives": [
+     "PasswordAuthentication",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "MaxAuthTries"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 9,
+   "actions_accepted": 9,
+   "applied": 9,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 9,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 9,
+   "rollback_attempted": 9,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1014,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": true
+   },
+   "actions_proposed": 10,
+   "actions_accepted": 10,
+   "applied": 10,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space"
+   ],
+   "weak_after_apply": [],
+   "fixed": 10,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 10,
+   "rollback_attempted": 10,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1015,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": true
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/group",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1016,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": true
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1017,
+   "lab": {
+    "weak_directives": [
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": false
+   },
+   "actions_proposed": 12,
+   "actions_accepted": 12,
+   "applied": 12,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 12,
+   "missed": [],
+   "sysctls_applied": 5,
+   "sysctls_persisted": 5,
+   "rollback_reverted": 12,
+   "rollback_attempted": 12,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1018,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding"
+    ],
+    "case_varied": [],
+    "dropin": false
+   },
+   "actions_proposed": 9,
+   "actions_accepted": 9,
+   "applied": 9,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "mode:etc/passwd",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 9,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 9,
+   "rollback_attempted": 9,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1019,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "MaxAuthTries"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 10,
+   "actions_accepted": 10,
+   "applied": 10,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies"
+   ],
+   "weak_after_apply": [],
+   "fixed": 10,
+   "missed": [],
+   "sysctls_applied": 2,
+   "sysctls_persisted": 2,
+   "rollback_reverted": 10,
+   "rollback_attempted": 10,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1020,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PermitEmptyPasswords"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1021,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PermitRootLogin",
+     "X11Forwarding"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 12,
+   "actions_accepted": 12,
+   "applied": 12,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 12,
+   "missed": [],
+   "sysctls_applied": 3,
+   "sysctls_persisted": 3,
+   "rollback_reverted": 12,
+   "rollback_attempted": 12,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1022,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": false
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1023,
+   "lab": {
+    "weak_directives": [
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": true
+   },
+   "actions_proposed": 10,
+   "actions_accepted": 10,
+   "applied": 10,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:passwordauthentication",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space"
+   ],
+   "weak_after_apply": [],
+   "fixed": 10,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 10,
+   "rollback_attempted": 10,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1024,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PermitEmptyPasswords",
+     "X11Forwarding"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 12,
+   "actions_accepted": 12,
+   "applied": 12,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space"
+   ],
+   "weak_after_apply": [],
+   "fixed": 12,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 12,
+   "rollback_attempted": 12,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1025,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": false
+   },
+   "actions_proposed": 14,
+   "actions_accepted": 14,
+   "applied": 14,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:permitemptypasswords",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 14,
+   "missed": [],
+   "sysctls_applied": 5,
+   "sysctls_persisted": 5,
+   "rollback_reverted": 14,
+   "rollback_attempted": 14,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1026,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": true
+   },
+   "actions_proposed": 13,
+   "actions_accepted": 13,
+   "applied": 13,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/passwd",
+    "mode:etc/group",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 13,
+   "missed": [],
+   "sysctls_applied": 5,
+   "sysctls_persisted": 5,
+   "rollback_reverted": 13,
+   "rollback_attempted": 13,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1027,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "MaxAuthTries"
+    ],
+    "dropin": false
+   },
+   "actions_proposed": 11,
+   "actions_accepted": 11,
+   "applied": 11,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/gshadow",
+    "mode:etc/passwd",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 11,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 11,
+   "rollback_attempted": 11,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1028,
+   "lab": {
+    "weak_directives": [
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "X11Forwarding",
+     "MaxAuthTries"
+    ],
+    "case_varied": [
+     "PasswordAuthentication"
+    ],
+    "dropin": true
+   },
+   "actions_proposed": 9,
+   "actions_accepted": 9,
+   "applied": 9,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:passwordauthentication",
+    "sshd:x11forwarding",
+    "sshd:maxauthtries",
+    "mode:etc/group",
+    "sysctl:net.ipv4.conf.all.accept_redirects",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 9,
+   "missed": [],
+   "sysctls_applied": 5,
+   "sysctls_persisted": 5,
+   "rollback_reverted": 9,
+   "rollback_attempted": 9,
+   "rollback_exact": true,
+   "rollback_diff": []
+  },
+  {
+   "seed": 1029,
+   "lab": {
+    "weak_directives": [
+     "PermitRootLogin",
+     "PasswordAuthentication",
+     "PermitEmptyPasswords",
+     "MaxAuthTries"
+    ],
+    "case_varied": [],
+    "dropin": false
+   },
+   "actions_proposed": 9,
+   "actions_accepted": 9,
+   "applied": 9,
+   "apply_error": "",
+   "weak_before": [
+    "sshd:permitrootlogin",
+    "sshd:passwordauthentication",
+    "sshd:maxauthtries",
+    "mode:etc/shadow",
+    "mode:etc/ssh/sshd_config",
+    "sysctl:net.ipv4.conf.all.send_redirects",
+    "sysctl:net.ipv4.tcp_syncookies",
+    "sysctl:kernel.randomize_va_space",
+    "sysctl:fs.suid_dumpable"
+   ],
+   "weak_after_apply": [],
+   "fixed": 9,
+   "missed": [],
+   "sysctls_applied": 4,
+   "sysctls_persisted": 4,
+   "rollback_reverted": 9,
+   "rollback_attempted": 9,
+   "rollback_exact": true,
+   "rollback_diff": []
+  }
+ ]
+}

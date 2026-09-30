@@ -13,10 +13,12 @@ survives, and it treats output from both proposers identically.
 from __future__ import annotations
 
 import json
+import re
 import socket
 import uuid
 
 from . import config, llm
+from .schema import _rel
 from .schema import (
     BreakRisk,
     DisableService,
@@ -105,13 +107,20 @@ class RulesProposer:
                     cis_control=cis, break_risk=risk, finding_ids=[f.id],
                 ))
 
-            elif f.category == "permission" and f.path in _PERM_TARGETS:
-                want, cis = _PERM_TARGETS[f.path]
+            elif f.category == "permission" and f.path and _rel(f.path) in _PERM_TARGETS:
+                target, cis = _PERM_TARGETS[_rel(f.path)]
+                # Only ever remove bits: the CIS mode intersected with the
+                # current one. /etc/shadow at 0604 becomes 0600, not 0640 —
+                # 0640 would grant group-read the file never had.
+                want = target
+                if f.current_value and re.fullmatch(r"0?[0-7]{3}", f.current_value):
+                    want = f"{int(target, 8) & int(f.current_value, 8):04o}"
                 n += 1
                 actions.append(SetFileMode(
                     id=f"a{n}", action="set_file_mode",
                     path=f.path, mode=want, current_mode=f.current_value,
-                    justification=f"CIS {cis}: restrict {f.path} to mode {want}.",
+                    justification=f"CIS {cis}: restrict {f.path} to mode {want} "
+                                  f"({target} or stricter).",
                     cis_control=cis, break_risk=BreakRisk.LOW, finding_ids=[f.id],
                 ))
 

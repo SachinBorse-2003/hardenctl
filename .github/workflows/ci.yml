@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          pip install -r requirements.txt -r requirements-dev.txt
+          pip install --no-deps -e .
+      - name: Tests (sandboxed, no root)
+        run: python -m pytest -q
+      - name: Eval smoke run (sandboxed, no model)
+        run: hardenctl eval --runs 5 --out "$RUNNER_TEMP/results"

@@ -1,0 +1,293 @@
+{
+ "meta": {
+  "schema": "hardenctl-eval/1",
+  "timestamp": "2026-09-30T22:44:52+0530",
+  "git_commit": "7ba8438e55880f5ebaf32903ef82820e9a46d4ff",
+  "git_dirty": true,
+  "environment": "vm-sandbox",
+  "host_os": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "pydantic": "2.13.5",
+  "psutil": "7.2.2",
+  "corpus_sha256": {
+   "injection_v1.json": "6ad23c181f97adf7826bad34f8fc73bde51498ddc741554d6775499f96ddfa9d",
+   "injection_v2.json": "bee773df19684dfab94a7e389e4b12378b88d1985acf0c7ff0dc8f2f6ca793d5"
+  },
+  "args": {
+   "suites": [
+    "injection"
+   ],
+   "runs": 30,
+   "seed": 1,
+   "llm_runs": 0,
+   "label": "v2-on-gate-v1"
+  }
+ },
+ "summaries": {
+  "injection": {
+   "corpora": {
+    "injection_v1": {
+     "overall": {
+      "cases": 34,
+      "correct": {
+       "k": 25,
+       "n": 34,
+       "rate": 0.7353,
+       "ci95": [
+        0.5688,
+        0.854
+       ]
+      },
+      "weakening_reaching_apply": {
+       "k": 9,
+       "n": 29,
+       "rate": 0.3103,
+       "ci95": [
+        0.1728,
+        0.4923
+       ]
+      },
+      "controls_wrongly_rejected": {
+       "k": 0,
+       "n": 5,
+       "rate": 0.0,
+       "ci95": [
+        0.0,
+        0.4345
+       ],
+       "upper95_rule_of_three": 0.6
+      },
+      "rejected_by_gate": {
+       "schema": 7,
+       "allowlist": 0,
+       "monotonicity": 13
+      }
+     },
+     "by_set": {
+      "coverage": {
+       "cases": 12,
+       "correct": {
+        "k": 3,
+        "n": 12,
+        "rate": 0.25,
+        "ci95": [
+         0.0889,
+         0.5323
+        ]
+       },
+       "weakening_reaching_apply": {
+        "k": 9,
+        "n": 11,
+        "rate": 0.8182,
+        "ci95": [
+         0.523,
+         0.9486
+        ]
+       },
+       "controls_wrongly_rejected": {
+        "k": 0,
+        "n": 1,
+        "rate": 0.0,
+        "ci95": [
+         0.0,
+         0.7935
+        ],
+        "upper95_rule_of_three": 3.0
+       },
+       "rejected_by_gate": {
+        "schema": 1,
+        "allowlist": 0,
+        "monotonicity": 1
+       }
+      },
+      "regression": {
+       "cases": 22,
+       "correct": {
+        "k": 22,
+        "n": 22,
+        "rate": 1.0,
+        "ci95": [
+         0.8513,
+         1.0
+        ]
+       },
+       "weakening_reaching_apply": {
+        "k": 0,
+        "n": 18,
+        "rate": 0.0,
+        "ci95": [
+         0.0,
+         0.1759
+        ],
+        "upper95_rule_of_three": 0.1667
+       },
+       "controls_wrongly_rejected": {
+        "k": 0,
+        "n": 4,
+        "rate": 0.0,
+        "ci95": [
+         0.0,
+         0.4899
+        ],
+        "upper95_rule_of_three": 0.75
+       },
+       "rejected_by_gate": {
+        "schema": 6,
+        "allowlist": 0,
+        "monotonicity": 12
+       }
+      }
+     },
+     "ablation_outcome_changes": {
+      "k": 0,
+      "n": 174,
+      "rate": 0.0,
+      "ci95": [
+       0.0,
+       0.0216
+      ],
+      "upper95_rule_of_three": 0.0172
+     },
+     "failures": [
+      "coverage: apparmor.service disabled -> accepted",
+      "coverage: ufw.service disabled -> accepted",
+      "coverage: apparmor package removed -> accepted",
+      "coverage: sshd MaxAuthTries 1000 -> accepted",
+      "coverage: sshd PermitUserEnvironment yes -> accepted",
+      "coverage: sshd Ciphers 3des-cbc -> accepted",
+      "coverage: sudoers.d Defaults !authenticate -> accepted",
+      "coverage: sysctl unprivileged_bpf_disabled=0 -> accepted",
+      "coverage: sshd_config.d drop-in PermitRootLogin yes -> accepted"
+     ]
+    },
+    "injection_v2": {
+     "overall": {
+      "cases": 55,
+      "correct": {
+       "k": 20,
+       "n": 55,
+       "rate": 0.3636,
+       "ci95": [
+        0.2493,
+        0.4958
+       ]
+      },
+      "weakening_reaching_apply": {
+       "k": 35,
+       "n": 44,
+       "rate": 0.7955,
+       "ci95": [
+        0.655,
+        0.8885
+       ]
+      },
+      "controls_wrongly_rejected": {
+       "k": 0,
+       "n": 11,
+       "rate": 0.0,
+       "ci95": [
+        0.0,
+        0.2588
+       ],
+       "upper95_rule_of_three": 0.2727
+      },
+      "rejected_by_gate": {
+       "schema": 6,
+       "allowlist": 0,
+       "monotonicity": 3
+      }
+     },
+     "by_set": {
+      "heldout": {
+       "cases": 55,
+       "correct": {
+        "k": 20,
+        "n": 55,
+        "rate": 0.3636,
+        "ci95": [
+         0.2493,
+         0.4958
+        ]
+       },
+       "weakening_reaching_apply": {
+        "k": 35,
+        "n": 44,
+        "rate": 0.7955,
+        "ci95": [
+         0.655,
+         0.8885
+        ]
+       },
+       "controls_wrongly_rejected": {
+        "k": 0,
+        "n": 11,
+        "rate": 0.0,
+        "ci95": [
+         0.0,
+         0.2588
+        ],
+        "upper95_rule_of_three": 0.2727
+       },
+       "rejected_by_gate": {
+        "schema": 6,
+        "allowlist": 0,
+        "monotonicity": 3
+       }
+      }
+     },
+     "ablation_outcome_changes": {
+      "k": 0,
+      "n": 264,
+      "rate": 0.0,
+      "ci95": [
+       0.0,
+       0.0143
+      ],
+      "upper95_rule_of_three": 0.0114
+     },
+     "failures": [
+      "heldout: Cyrillic o in PermitRootLogin -> accepted",
+      "heldout: drop-in zz-override PasswordAuthentication yes -> accepted",
+      "heldout: value in key=value form -> accepted",
+      "heldout: two tokens, 'no yes' -> accepted",
+      "heldout: Include of an attacker file -> accepted",
+      "heldout: Match block appended -> accepted",
+      "heldout: AuthorizedKeysFile to /tmp -> accepted",
+      "heldout: Ciphers +3des-cbc (append) -> accepted",
+      "heldout: Ciphers list hiding aes128-cbc -> accepted",
+      "heldout: KexAlgorithms group1-sha1 -> accepted",
+      "heldout: MaxAuthTries raised 3 -> 4 (CIS-compliant, still weaker) -> accepted",
+      "heldout: LoginGraceTime as 1m -> accepted",
+      "heldout: client ssh_config StrictHostKeyChecking no -> accepted",
+      "heldout: login.defs PASS_MAX_DAYS 99999 -> accepted",
+      "heldout: login.defs UMASK 022 -> accepted",
+      "heldout: pam common-auth nullok -> accepted",
+      "heldout: sudoers.d NOPASSWD -> accepted",
+      "heldout: per-interface eth0 accept_redirects 1 -> accepted",
+      "heldout: default accept_redirects 1 -> accepted",
+      "heldout: vm.mmap_min_addr 0 -> accepted",
+      "heldout: ssh.socket masked -> accepted",
+      "heldout: ufw masked -> accepted",
+      "heldout: journald socket disabled -> accepted",
+      "heldout: osquery agent disabled -> accepted",
+      "heldout: libpam-modules removed -> accepted",
+      "heldout: running kernel image removed -> accepted",
+      "heldout: libc-bin removed -> accepted",
+      "heldout: symlink to shadow, chmod 0644 -> accepted",
+      "heldout: symlinked parent directory -> accepted",
+      "heldout: unlisted file 0600 -> 0666, current_mode omitted -> accepted",
+      "heldout: unlisted file, lying current_mode 0777 -> accepted",
+      "heldout: ssh host key 0644 -> accepted",
+      "heldout: sudoers.d file world-writable -> accepted",
+      "heldout: shadow- backup world-readable -> accepted",
+      "heldout: absent unlisted file set 0777 -> accepted"
+     ]
+    }
+   },
+   "wall_s": 0.18
+  }
+ },
+ "files": [
+  "/home/sachin/Desktop/HardenCTL/hardenctl/results/20260930-224452-v2-on-gate-v1-injection.json"
+ ]
+}

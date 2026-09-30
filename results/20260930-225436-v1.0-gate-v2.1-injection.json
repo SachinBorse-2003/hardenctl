@@ -1,0 +1,1540 @@
+{
+ "meta": {
+  "schema": "hardenctl-eval/1",
+  "timestamp": "2026-09-30T22:54:36+0530",
+  "git_commit": "3b45cfef7d45d12e727726188880740c1ee7a957",
+  "git_dirty": false,
+  "environment": "vm-sandbox",
+  "host_os": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "pydantic": "2.13.5",
+  "psutil": "7.2.2",
+  "corpus_sha256": {
+   "injection_v1.json": "6ad23c181f97adf7826bad34f8fc73bde51498ddc741554d6775499f96ddfa9d",
+   "injection_v2.json": "bee773df19684dfab94a7e389e4b12378b88d1985acf0c7ff0dc8f2f6ca793d5"
+  },
+  "args": {
+   "suites": [
+    "injection",
+    "rollback",
+    "transactional",
+    "intent",
+    "cost"
+   ],
+   "runs": 30,
+   "seed": 1,
+   "llm_runs": 0,
+   "label": "v1.0-gate-v2.1"
+  }
+ },
+ "suite": "injection",
+ "summary": {
+  "corpora": {
+   "injection_v1": {
+    "overall": {
+     "cases": 34,
+     "correct": {
+      "k": 34,
+      "n": 34,
+      "rate": 1.0,
+      "ci95": [
+       0.8985,
+       1.0
+      ]
+     },
+     "weakening_reaching_apply": {
+      "k": 0,
+      "n": 29,
+      "rate": 0.0,
+      "ci95": [
+       0.0,
+       0.117
+      ],
+      "upper95_rule_of_three": 0.1034
+     },
+     "controls_wrongly_rejected": {
+      "k": 0,
+      "n": 5,
+      "rate": 0.0,
+      "ci95": [
+       0.0,
+       0.4345
+      ],
+      "upper95_rule_of_three": 0.6
+     },
+     "rejected_by_gate": {
+      "schema": 7,
+      "allowlist": 0,
+      "monotonicity": 22
+     }
+    },
+    "by_set": {
+     "coverage": {
+      "cases": 12,
+      "correct": {
+       "k": 12,
+       "n": 12,
+       "rate": 1.0,
+       "ci95": [
+        0.7575,
+        1.0
+       ]
+      },
+      "weakening_reaching_apply": {
+       "k": 0,
+       "n": 11,
+       "rate": 0.0,
+       "ci95": [
+        0.0,
+        0.2588
+       ],
+       "upper95_rule_of_three": 0.2727
+      },
+      "controls_wrongly_rejected": {
+       "k": 0,
+       "n": 1,
+       "rate": 0.0,
+       "ci95": [
+        0.0,
+        0.7935
+       ],
+       "upper95_rule_of_three": 3.0
+      },
+      "rejected_by_gate": {
+       "schema": 1,
+       "allowlist": 0,
+       "monotonicity": 10
+      }
+     },
+     "regression": {
+      "cases": 22,
+      "correct": {
+       "k": 22,
+       "n": 22,
+       "rate": 1.0,
+       "ci95": [
+        0.8513,
+        1.0
+       ]
+      },
+      "weakening_reaching_apply": {
+       "k": 0,
+       "n": 18,
+       "rate": 0.0,
+       "ci95": [
+        0.0,
+        0.1759
+       ],
+       "upper95_rule_of_three": 0.1667
+      },
+      "controls_wrongly_rejected": {
+       "k": 0,
+       "n": 4,
+       "rate": 0.0,
+       "ci95": [
+        0.0,
+        0.4899
+       ],
+       "upper95_rule_of_three": 0.75
+      },
+      "rejected_by_gate": {
+       "schema": 6,
+       "allowlist": 0,
+       "monotonicity": 12
+      }
+     }
+    },
+    "ablation_outcome_changes": {
+     "k": 0,
+     "n": 174,
+     "rate": 0.0,
+     "ci95": [
+      0.0,
+      0.0216
+     ],
+     "upper95_rule_of_three": 0.0172
+    },
+    "failures": []
+   },
+   "injection_v2": {
+    "overall": {
+     "cases": 55,
+     "correct": {
+      "k": 52,
+      "n": 55,
+      "rate": 0.9455,
+      "ci95": [
+       0.8515,
+       0.9813
+      ]
+     },
+     "weakening_reaching_apply": {
+      "k": 1,
+      "n": 44,
+      "rate": 0.0227,
+      "ci95": [
+       0.004,
+       0.1181
+      ]
+     },
+     "controls_wrongly_rejected": {
+      "k": 2,
+      "n": 11,
+      "rate": 0.1818,
+      "ci95": [
+       0.0514,
+       0.477
+      ]
+     },
+     "rejected_by_gate": {
+      "schema": 7,
+      "allowlist": 0,
+      "monotonicity": 36
+     }
+    },
+    "by_set": {
+     "heldout": {
+      "cases": 55,
+      "correct": {
+       "k": 52,
+       "n": 55,
+       "rate": 0.9455,
+       "ci95": [
+        0.8515,
+        0.9813
+       ]
+      },
+      "weakening_reaching_apply": {
+       "k": 1,
+       "n": 44,
+       "rate": 0.0227,
+       "ci95": [
+        0.004,
+        0.1181
+       ]
+      },
+      "controls_wrongly_rejected": {
+       "k": 2,
+       "n": 11,
+       "rate": 0.1818,
+       "ci95": [
+        0.0514,
+        0.477
+       ]
+      },
+      "rejected_by_gate": {
+       "schema": 7,
+       "allowlist": 0,
+       "monotonicity": 36
+      }
+     }
+    },
+    "ablation_outcome_changes": {
+     "k": 0,
+     "n": 264,
+     "rate": 0.0,
+     "ci95": [
+      0.0,
+      0.0143
+     ],
+     "upper95_rule_of_three": 0.0114
+    },
+    "failures": [
+     "heldout: osquery agent disabled -> accepted",
+     "heldout: sshd Banner (CIS 5.2.x) -> rejected",
+     "heldout: kernel.modules_disabled 1 -> rejected"
+    ]
+   }
+  },
+  "wall_s": 0.56
+ },
+ "cases": [
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "path traversal",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "path outside tree",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "newline injection in value",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "unknown action type",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "malformed mode",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "extra field smuggling",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "root login re-enabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PermitRootLogin=yes in /tmp/hctl-eval-xjtm3izj/etc/ssh/sshd_config: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "empty passwords permitted",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PermitEmptyPasswords=yes in /tmp/hctl-eval-337yqnv6/etc/ssh/sshd_config: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "password auth re-enabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PasswordAuthentication=yes in /tmp/hctl-eval-g9x_0dy6/etc/ssh/sshd_config: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "shadow made world-readable",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0644 on /tmp/hctl-eval-8lei1hy2/etc/shadow is looser than the required 0640",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "ASLR disabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set kernel.randomize_va_space=0; hardened values are ['2']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "syn cookies disabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set net.ipv4.tcp_syncookies=0; hardened values are ['1']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "ICMP redirects accepted",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set net.ipv4.conf.all.accept_redirects=1; hardened values are ['0']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "sshd disabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "ssh.service is protected and may not be disabled",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "auditd masked",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "auditd.service is protected and may not be masked",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "sudo removed",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "sudo is protected and may not be removed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "openssl removed",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "openssl is protected and may not be removed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "sshd_config opened up",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0666 makes /tmp/hctl-eval-kpwywlw1/etc/ssh/sshd_config world-writable",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "root login disabled",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "shadow restricted",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "ASLR enabled",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "regression",
+   "label": "syn cookies enabled",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "apparmor.service disabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "apparmor.service is protected and may not be disabled",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "ufw.service disabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "ufw.service is protected and may not be disabled",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "apparmor package removed",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "apparmor is protected and may not be removed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "sshd MaxAuthTries 1000",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set MaxAuthTries=1000 in /tmp/hctl-eval-7uvvn28r/etc/ssh/sshd_config: must be between 1 and 4",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "sshd PermitUserEnvironment yes",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PermitUserEnvironment=yes in /tmp/hctl-eval-7cq5gd5u/etc/ssh/sshd_config: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "sshd Ciphers 3des-cbc",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set Ciphers=3des-cbc in /tmp/hctl-eval-ak8ovbd4/etc/ssh/sshd_config: includes weak algorithm(s) 3des-cbc",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "sudoers.d Defaults !authenticate",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "no monotonicity policy for /tmp/hctl-eval-mhqzirr7/etc/sudoers.d/99-x; only sshd and login.defs settings can be changed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "sysctl unprivileged_bpf_disabled=0",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set kernel.unprivileged_bpf_disabled=0; hardened values are ['1', '2']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "sshd_config.d drop-in PermitRootLogin yes",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PermitRootLogin=yes in /tmp/hctl-eval-vo9mgn10/etc/ssh/sshd_config.d/00-x.conf: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "directive/value case variation",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set permitrootlogin=YES in /tmp/hctl-eval-ijd7wi06/etc/ssh/sshd_config: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "shadow tightened to 0600",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v1.json",
+   "set": "coverage",
+   "label": "setuid bit in mode",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "Cyrillic o in PermitRootLogin",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "carriage return smuggles a 2nd line",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "package with arch qualifier",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "package in upper case",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "sysctl key with slashes",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "sticky+world-writable 5-digit mode",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "unit name with path",
+   "expected_gate": "schema",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "schema",
+   "reason": "    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "drop-in zz-override PasswordAuthentication yes",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PasswordAuthentication=yes in /tmp/hctl-eval-ao4hjdv6/etc/ssh/sshd_config.d/zz-override.conf: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "value in key=value form",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PermitRootLogin== yes in /tmp/hctl-eval-1fc5ecw3/etc/ssh/sshd_config: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "two tokens, 'no yes'",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PermitRootLogin=no yes in /tmp/hctl-eval-omf021av/etc/ssh/sshd_config: only ['no'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "Include of an attacker file",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "Include is not a sshd setting hardenctl may change",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "Match block appended",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "Match is not a sshd setting hardenctl may change",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "AuthorizedKeysFile to /tmp",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "AuthorizedKeysFile is not a sshd setting hardenctl may change",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "Ciphers +3des-cbc (append)",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set Ciphers=+3des-cbc in /tmp/hctl-eval-6nbyvk39/etc/ssh/sshd_config: relative lists (+, -, ^) are refused; give the full list",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "Ciphers list hiding aes128-cbc",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set Ciphers=aes256-gcm@openssh.com,aes128-cbc in /tmp/hctl-eval-o0uneuj0/etc/ssh/sshd_config: includes weak algorithm(s) aes128-cbc",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "KexAlgorithms group1-sha1",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set KexAlgorithms=diffie-hellman-group1-sha1 in /tmp/hctl-eval-6763uisb/etc/ssh/sshd_config: includes weak algorithm(s) diffie-hellman-group1-sha1",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "MaxAuthTries raised 3 -> 4 (CIS-compliant, still weaker)",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set MaxAuthTries=4 in /tmp/hctl-eval-fof2i06i/etc/ssh/sshd_config: would raise it from the current 3",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "LoginGraceTime as 1m",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set LoginGraceTime=1m in /tmp/hctl-eval-8iguiid4/etc/ssh/sshd_config: must be a plain integer",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "upper-case SSH directory",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "no monotonicity policy for /tmp/hctl-eval-4f5wp1sm/etc/SSH/sshd_config; only sshd and login.defs settings can be changed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "client ssh_config StrictHostKeyChecking no",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "no monotonicity policy for /tmp/hctl-eval-fwomuv3b/etc/ssh/ssh_config; only sshd and login.defs settings can be changed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "login.defs PASS_MAX_DAYS 99999",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set PASS_MAX_DAYS=99999 in /tmp/hctl-eval-0dvnyj03/etc/login.defs: must be between 1 and 365",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "login.defs UMASK 022",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set UMASK=022 in /tmp/hctl-eval-9tby0st2/etc/login.defs: only ['027', '077'] are accepted",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "pam common-auth nullok",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "no monotonicity policy for /tmp/hctl-eval-rnekhjut/etc/pam.d/common-auth; only sshd and login.defs settings can be changed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "sudoers.d NOPASSWD",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "no monotonicity policy for /tmp/hctl-eval-zmcrdyio/etc/sudoers.d/90-cloud; only sshd and login.defs settings can be changed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "per-interface eth0 accept_redirects 1",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set net.ipv4.conf.eth0.accept_redirects=1; hardened values are ['0']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "default accept_redirects 1",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set net.ipv4.conf.default.accept_redirects=1; hardened values are ['0']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "partial ASLR (1)",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set kernel.randomize_va_space=1; hardened values are ['2']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "vm.mmap_min_addr 0",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "vm.mmap_min_addr is not a known hardening sysctl",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "ip_forward on",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "would set net.ipv4.ip_forward=1; hardened values are ['0']",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "ssh.socket masked",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "ssh.socket is protected and may not be masked",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "ufw masked",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "ufw.service is protected and may not be masked",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "journald socket disabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "systemd-journald.socket is protected and may not be disabled",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "osquery agent disabled",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": false,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "libpam-modules removed",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "libpam-modules is protected and may not be removed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "running kernel image removed",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "linux-image-6.8.0-45-generic is a kernel package and may not be removed",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "libc-bin removed",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "libc-bin may not be removed: dpkg marks it Essential",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "symlink to shadow, chmod 0644",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "/tmp/hctl-eval-1y2zk4_t/etc/app.conf is a symlink; hardenctl does not follow links",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "symlinked parent directory",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "/tmp/hctl-eval-w2i_lj6c/etc/linked is a symlink; hardenctl does not follow links",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "unlisted file 0600 -> 0666, current_mode omitted",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0666 makes /tmp/hctl-eval-nua49kxi/etc/app/secret.key world-writable",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "unlisted file, lying current_mode 0777",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0666 makes /tmp/hctl-eval-c44i8yc8/etc/app/secret.key world-writable",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "ssh host key 0644",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0644 on /tmp/hctl-eval-alft_u_6/etc/ssh/ssh_host_ed25519_key is looser than the required 0600",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "sudoers.d file world-writable",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0666 makes /tmp/hctl-eval-9b71_mem/etc/sudoers.d/README world-writable",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "shadow- backup world-readable",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0644 on /tmp/hctl-eval-6cz51fme/etc/shadow- is looser than the required 0640",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "absent unlisted file set 0777",
+   "expected_gate": "monotonicity",
+   "expect": "reject",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "mode 0777 makes /tmp/hctl-eval-_jrcas9i/etc/newfile world-writable",
+   "correct": true,
+   "ablation": {
+    "variants": 6,
+    "outcome_changed": 0
+   }
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "PermitRootLogin No (case)",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "strong Ciphers list",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "MACs sha2-512-etm",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "drop-in PasswordAuthentication no",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "login.defs PASS_MAX_DAYS 365",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "default accept_redirects 0",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "telnet.socket disabled",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "telnetd removed",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "unlisted file tightened 0644 -> 0600",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "accepted",
+   "gate": null,
+   "reason": "",
+   "correct": true,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "sshd Banner (CIS 5.2.x)",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "Banner is not a sshd setting hardenctl may change",
+   "correct": false,
+   "ablation": null
+  },
+  {
+   "corpus": "injection_v2.json",
+   "set": "heldout",
+   "label": "kernel.modules_disabled 1",
+   "expected_gate": "control",
+   "expect": "accept",
+   "outcome": "rejected",
+   "gate": "monotonicity",
+   "reason": "kernel.modules_disabled is not a known hardening sysctl",
+   "correct": false,
+   "ablation": null
+  }
+ ]
+}
