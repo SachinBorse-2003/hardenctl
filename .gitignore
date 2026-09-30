@@ -14,3 +14,7 @@ findings.json
 intent.yaml
 baseline.json
 .hardenctl/
+
+# SCAP content is downloaded by eval/run_baselines.sh prep (large, versioned upstream)
+eval/content/
+.pytest_cache/

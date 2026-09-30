@@ -1,0 +1,297 @@
+{
+ "meta": {
+  "schema": "hardenctl-eval/1",
+  "timestamp": "2026-09-30T22:45:55+0530",
+  "git_commit": "640c4e648fd8ea4b13d1f53891f8a9fb3e84a8b6",
+  "git_dirty": false,
+  "environment": "vm-sandbox",
+  "host_os": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "pydantic": "2.13.5",
+  "psutil": "7.2.2",
+  "corpus_sha256": {
+   "injection_v1.json": "6ad23c181f97adf7826bad34f8fc73bde51498ddc741554d6775499f96ddfa9d",
+   "injection_v2.json": "bee773df19684dfab94a7e389e4b12378b88d1985acf0c7ff0dc8f2f6ca793d5"
+  },
+  "args": {
+   "suites": [
+    "injection",
+    "rollback",
+    "transactional",
+    "intent",
+    "cost",
+    "llm"
+   ],
+   "runs": 30,
+   "seed": 1,
+   "llm_runs": 10,
+   "label": "v1.0-final"
+  }
+ },
+ "suite": "transactional",
+ "summary": {
+  "runs": 30,
+  "auto_revert_triggered": {
+   "k": 30,
+   "n": 30,
+   "rate": 1.0,
+   "ci95": [
+    0.8865,
+    1.0
+   ]
+  },
+  "auto_revert_exact": {
+   "k": 30,
+   "n": 30,
+   "rate": 1.0,
+   "ci95": [
+    0.8865,
+    1.0
+   ]
+  },
+  "failures": [],
+  "wall_s": 1.12
+ },
+ "cases": [
+  {
+   "seed": 1500,
+   "actions": 9,
+   "fail_position": 7,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1501,
+   "actions": 10,
+   "fail_position": 6,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1502,
+   "actions": 10,
+   "fail_position": 6,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1503,
+   "actions": 12,
+   "fail_position": 9,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1504,
+   "actions": 10,
+   "fail_position": 7,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1505,
+   "actions": 13,
+   "fail_position": 5,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1506,
+   "actions": 9,
+   "fail_position": 4,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1507,
+   "actions": 13,
+   "fail_position": 1,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1508,
+   "actions": 13,
+   "fail_position": 1,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1509,
+   "actions": 12,
+   "fail_position": 9,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1510,
+   "actions": 12,
+   "fail_position": 2,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1511,
+   "actions": 12,
+   "fail_position": 4,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1512,
+   "actions": 11,
+   "fail_position": 1,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1513,
+   "actions": 10,
+   "fail_position": 5,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1514,
+   "actions": 12,
+   "fail_position": 2,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1515,
+   "actions": 12,
+   "fail_position": 9,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1516,
+   "actions": 12,
+   "fail_position": 8,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1517,
+   "actions": 11,
+   "fail_position": 6,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1518,
+   "actions": 11,
+   "fail_position": 5,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1519,
+   "actions": 11,
+   "fail_position": 9,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1520,
+   "actions": 11,
+   "fail_position": 2,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1521,
+   "actions": 13,
+   "fail_position": 4,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1522,
+   "actions": 10,
+   "fail_position": 8,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1523,
+   "actions": 9,
+   "fail_position": 4,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1524,
+   "actions": 9,
+   "fail_position": 1,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1525,
+   "actions": 13,
+   "fail_position": 2,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1526,
+   "actions": 14,
+   "fail_position": 2,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1527,
+   "actions": 9,
+   "fail_position": 3,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1528,
+   "actions": 12,
+   "fail_position": 6,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  },
+  {
+   "seed": 1529,
+   "actions": 12,
+   "fail_position": 1,
+   "rolled_back": true,
+   "exact": true,
+   "diff": []
+  }
+ ]
+}
