@@ -450,6 +450,84 @@ def runs():
     console.print(table)
 
 
+@app.command("eval")
+def eval_cmd(
+    suite: list[str] = typer.Option(
+        [], "--suite", "-s",
+        help="injection | rollback | transactional | intent | cost | llm (repeatable). "
+             "Default: all but llm."),
+    runs: int = typer.Option(30, help="Seeded runs per suite."),
+    seed: int = typer.Option(1, help="Base seed; fixed seeds make runs repeatable."),
+    llm_runs: int = typer.Option(0, "--llm-runs",
+                                 help="Runs per condition for the llm suite (sends "
+                                      "sandbox findings to the configured model)."),
+    out: str = typer.Option("", help="Results directory (default: <repo>/results)."),
+    label: str = typer.Option("", help="Tag added to result file names."),
+):
+    """Run the evaluation harness in a sandbox and write raw JSON results."""
+    from . import evaluate
+
+    suites = list(suite) or list(evaluate.DEFAULT_SUITES)
+    if llm_runs and "llm" not in suites:
+        suites.append("llm")
+    unknown = [s for s in suites if s not in evaluate.SUITES]
+    if unknown:
+        console.print(f"[red]unknown suite(s): {', '.join(unknown)}[/red]")
+        raise typer.Exit(1)
+    if "llm" in suites and not llm_runs:
+        llm_runs = 5
+
+    with console.status(f"running {', '.join(suites)} ..."):
+        res = evaluate.run(suites, runs=runs, seed=seed, llm_runs=llm_runs,
+                           out_dir=Path(out) if out else None, label=label)
+
+    def fmt(r: dict) -> str:
+        if not isinstance(r, dict) or "k" not in r:
+            return "—"
+        lo, hi = r["ci95"]
+        return f"{r['k']}/{r['n']}  ({r['rate']:.1%}, 95% CI {lo:.1%}–{hi:.1%})" if r["n"] else "0/0"
+
+    s = res["summaries"]
+    table = Table(title="hardenctl eval", header_style="bold")
+    table.add_column("METRIC")
+    table.add_column("RESULT")
+    for name, block in (s.get("injection") or {}).get("corpora", {}).items():
+        table.add_row(f"{name}: correct", fmt(block["overall"]["correct"]))
+        table.add_row(f"{name}: weakening reaching apply",
+                      fmt(block["overall"]["weakening_reaching_apply"]))
+        table.add_row(f"{name}: justification ablation changes",
+                      fmt(block["ablation_outcome_changes"]))
+    if "rollback" in s:
+        table.add_row("rollback fidelity", fmt(s["rollback"]["rollback_fidelity"]))
+        table.add_row("remediation effectiveness (rules)",
+                      fmt(s["rollback"]["remediation_effectiveness"]))
+    if "transactional" in s:
+        table.add_row("auto-revert exact on failure", fmt(s["transactional"]["auto_revert_exact"]))
+    if "intent" in s:
+        for lbl, r in s["intent"]["detection"].items():
+            table.add_row(f"intent {lbl} detected", fmt(r))
+        table.add_row("intent MISSING detected", fmt(s["intent"]["missing_detection"]))
+        table.add_row("intent false positives (controls)",
+                      fmt(s["intent"]["false_positive_rate_on_controls"]))
+    if "cost" in s:
+        table.add_row("explainer prompt saved by intent (mean)",
+                      f"{s['cost']['saved_fraction']['mean']:.1%}")
+    if "llm" in s:
+        for c in ("clean", "poisoned"):
+            b = s["llm"][c]
+            table.add_row(f"llm {c}: plan validity", fmt(b["plan_validity"]))
+            table.add_row(f"llm {c}: injection goal proposed (runs)",
+                          fmt(b["runs_with_injection_goal_proposed"]))
+            table.add_row(f"llm {c}: injection goal reaching apply",
+                          fmt(b["injection_goal_actions_reaching_apply"]))
+    console.print(table)
+    meta = res["meta"]
+    console.print(f"[dim]{meta['environment']} · commit {str(meta['git_commit'])[:8]}"
+                  f"{' (dirty)' if meta['git_dirty'] else ''} · seed {seed} · runs {runs}[/dim]")
+    for f in res["files"]:
+        console.print(f"[green]wrote {f}[/green]")
+
+
 def main():
     app()
 

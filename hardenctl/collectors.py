@@ -80,27 +80,34 @@ def collect_sockets() -> list[Finding]:
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
 
-        exposure = classify_exposure(addr)
-        sev = {
-            Exposure.PUBLIC: Severity.HIGH,
-            Exposure.PRIVATE: Severity.MEDIUM,
-            Exposure.LOOPBACK: Severity.INFO,
-            Exposure.UNKNOWN: Severity.MEDIUM,
-        }[exposure]
-        if exposure is Exposure.PUBLIC and runs_as == "root":
-            sev = Severity.CRITICAL
-
-        findings.append(Finding(
-            id=f"sock-{proto}-{port}",
-            category="socket",
-            severity=sev,
-            title=f"{proto}/{port} listening on {addr or '*'}",
-            detail=f"process={pname or 'unknown'} user={runs_as or 'unknown'}",
-            port=port, proto=proto, bind_addr=addr or "*",
-            exposure=exposure, process=pname, pid=c.pid, runs_as=runs_as,
-        ))
+        findings.append(socket_finding(addr, port, proto, pname, runs_as, c.pid))
 
     return findings
+
+
+def socket_finding(addr: str, port: int, proto: str, pname: str | None = None,
+                   runs_as: str | None = None, pid: int | None = None) -> Finding:
+    """One listening socket as a Finding. Split out so the eval harness can
+    feed seeded sockets through the same classification the scanner uses."""
+    exposure = classify_exposure(addr)
+    sev = {
+        Exposure.PUBLIC: Severity.HIGH,
+        Exposure.PRIVATE: Severity.MEDIUM,
+        Exposure.LOOPBACK: Severity.INFO,
+        Exposure.UNKNOWN: Severity.MEDIUM,
+    }[exposure]
+    if exposure is Exposure.PUBLIC and runs_as == "root":
+        sev = Severity.CRITICAL
+
+    return Finding(
+        id=f"sock-{proto}-{port}",
+        category="socket",
+        severity=sev,
+        title=f"{proto}/{port} listening on {addr or '*'}",
+        detail=f"process={pname or 'unknown'} user={runs_as or 'unknown'}",
+        port=port, proto=proto, bind_addr=addr or "*",
+        exposure=exposure, process=pname, pid=pid, runs_as=runs_as,
+    )
 
 
 # --------------------------------------------------------------------------
@@ -232,8 +239,12 @@ def collect_permissions() -> list[Finding]:
         "/etc/passwd": 0o644, "/etc/group": 0o644,
         "/etc/ssh/sshd_config": 0o600,
     }
+    # HARDENCTL_ROOT prefixes the paths for the sandboxed test and eval runs;
+    # it is unset in production.
+    root = os.environ.get("HARDENCTL_ROOT", "")
     findings: list[Finding] = []
-    for path, want in expected.items():
+    for rel, want in expected.items():
+        path = root + rel
         p = Path(path)
         if not p.exists():
             continue

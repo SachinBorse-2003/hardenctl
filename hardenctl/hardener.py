@@ -17,6 +17,7 @@ import socket
 import uuid
 
 from . import config, llm
+from .schema import _rel
 from .schema import (
     BreakRisk,
     DisableService,
@@ -105,8 +106,8 @@ class RulesProposer:
                     cis_control=cis, break_risk=risk, finding_ids=[f.id],
                 ))
 
-            elif f.category == "permission" and f.path in _PERM_TARGETS:
-                want, cis = _PERM_TARGETS[f.path]
+            elif f.category == "permission" and f.path and _rel(f.path) in _PERM_TARGETS:
+                want, cis = _PERM_TARGETS[_rel(f.path)]
                 n += 1
                 actions.append(SetFileMode(
                     id=f"a{n}", action="set_file_mode",

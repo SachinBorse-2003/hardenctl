@@ -21,6 +21,11 @@ class LLMError(RuntimeError):
     pass
 
 
+# Token usage reported by the provider for the most recent call. The eval
+# harness reads it to measure the cost of the agent; nothing else depends on it.
+LAST_USAGE: dict = {}
+
+
 def _anthropic_body(system: str, user: str, model: str, max_tokens: int) -> dict:
     return {
         "model": model,
@@ -118,6 +123,8 @@ def complete(
             f"For a local model, check it is running."
         ) from e
 
+    LAST_USAGE.clear()
+    LAST_USAGE.update(data.get("usage") or {})
     text = (_anthropic_text(data) if wire == "anthropic" else _openai_text(data)).strip()
     if not text:
         raise LLMError("provider returned an empty response")

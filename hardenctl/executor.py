@@ -165,8 +165,20 @@ def set_directive(path: str, directive: str, value: str) -> None:
     p.write_text("\n".join(lines) + "\n")
 
 
+def proc_sys() -> Path:
+    """
+    Root of the sysctl tree. HARDENCTL_PROC_SYS points it at a sandbox so the
+    eval harness can exercise sysctl apply and rollback without root.
+    """
+    return Path(os.environ.get("HARDENCTL_PROC_SYS", "/proc/sys"))
+
+
+def sysctl_path(key: str) -> Path:
+    return proc_sys() / key.replace(".", "/")
+
+
 def read_sysctl(key: str) -> str | None:
-    proc = Path("/proc/sys") / key.replace(".", "/")
+    proc = sysctl_path(key)
     try:
         return proc.read_text().strip()
     except OSError:
@@ -244,7 +256,7 @@ def execute(action: Action, run_id: str) -> StepResult:
             os.chmod(action.path, int(action.mode, 8))
 
         elif k == "set_sysctl":
-            proc = Path("/proc/sys") / action.key.replace(".", "/")
+            proc = sysctl_path(action.key)
             if not proc.exists():
                 return StepResult(action.id, k, "skipped", "sysctl key absent")
             proc.write_text(action.value + "\n")
@@ -287,7 +299,7 @@ def revert(inv: dict, run_id: str) -> bool:
         if k == "set_sysctl":
             if inv.get("value") is None:
                 return True
-            proc = Path("/proc/sys") / inv["key"].replace(".", "/")
+            proc = sysctl_path(inv["key"])
             proc.write_text(inv["value"] + "\n")
             return True
         if k == "enable_service":
