@@ -1,0 +1,287 @@
+{
+ "meta": {
+  "schema": "hardenctl-eval/1",
+  "timestamp": "2026-09-30T22:37:56+0530",
+  "git_commit": "7ba8438e55880f5ebaf32903ef82820e9a46d4ff",
+  "git_dirty": false,
+  "environment": "vm-sandbox",
+  "host_os": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "pydantic": "2.13.5",
+  "psutil": "7.2.2",
+  "corpus_sha256": {
+   "injection_v1.json": "6ad23c181f97adf7826bad34f8fc73bde51498ddc741554d6775499f96ddfa9d"
+  },
+  "args": {
+   "suites": [
+    "injection",
+    "rollback",
+    "transactional",
+    "intent",
+    "cost"
+   ],
+   "runs": 30,
+   "seed": 1,
+   "llm_runs": 0,
+   "label": "v0.1-baseline"
+  }
+ },
+ "suite": "cost",
+ "summary": {
+  "runs": 30,
+  "services_sent_without_intent": {
+   "n": 30,
+   "mean": 10.7,
+   "ci95": [
+    10.0333,
+    11.3667
+   ]
+  },
+  "services_sent_with_intent": {
+   "n": 30,
+   "mean": 4.1333,
+   "ci95": [
+    3.8667,
+    4.4
+   ]
+  },
+  "prompt_tokens_est_without_intent": {
+   "n": 30,
+   "mean": 1324.85,
+   "ci95": [
+    1275.0,
+    1374.8833
+   ]
+  },
+  "prompt_tokens_est_with_intent": {
+   "n": 30,
+   "mean": 840.85,
+   "ci95": [
+    820.9583,
+    860.8667
+   ]
+  },
+  "saved_fraction": {
+   "n": 30,
+   "mean": 0.3594,
+   "ci95": [
+    0.3346,
+    0.3839
+   ]
+  },
+  "note": "tokens estimated at 4 chars/token; characters are exact",
+  "wall_s": 0.07
+ },
+ "cases": [
+  {
+   "services_without_intent": 15,
+   "services_with_intent": 4,
+   "chars_without_intent": 6581,
+   "chars_with_intent": 3319,
+   "saved_fraction": 0.4957
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 5,
+   "chars_without_intent": 5692,
+   "chars_with_intent": 3623,
+   "saved_fraction": 0.3635
+  },
+  {
+   "services_without_intent": 10,
+   "services_with_intent": 4,
+   "chars_without_intent": 5083,
+   "chars_with_intent": 3313,
+   "saved_fraction": 0.3482
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 3,
+   "chars_without_intent": 5701,
+   "chars_with_intent": 3028,
+   "saved_fraction": 0.4689
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 5,
+   "chars_without_intent": 5691,
+   "chars_with_intent": 3630,
+   "saved_fraction": 0.3622
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 4,
+   "chars_without_intent": 5699,
+   "chars_with_intent": 3324,
+   "saved_fraction": 0.4167
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 5,
+   "chars_without_intent": 5694,
+   "chars_with_intent": 3628,
+   "saved_fraction": 0.3628
+  },
+  {
+   "services_without_intent": 10,
+   "services_with_intent": 4,
+   "chars_without_intent": 5092,
+   "chars_with_intent": 3331,
+   "saved_fraction": 0.3458
+  },
+  {
+   "services_without_intent": 8,
+   "services_with_intent": 4,
+   "chars_without_intent": 4478,
+   "chars_with_intent": 3312,
+   "saved_fraction": 0.2604
+  },
+  {
+   "services_without_intent": 9,
+   "services_with_intent": 5,
+   "chars_without_intent": 4799,
+   "chars_with_intent": 3637,
+   "saved_fraction": 0.2421
+  },
+  {
+   "services_without_intent": 10,
+   "services_with_intent": 4,
+   "chars_without_intent": 5094,
+   "chars_with_intent": 3326,
+   "saved_fraction": 0.3471
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 5,
+   "chars_without_intent": 5696,
+   "chars_with_intent": 3626,
+   "saved_fraction": 0.3634
+  },
+  {
+   "services_without_intent": 10,
+   "services_with_intent": 4,
+   "chars_without_intent": 5085,
+   "chars_with_intent": 3326,
+   "saved_fraction": 0.3459
+  },
+  {
+   "services_without_intent": 10,
+   "services_with_intent": 4,
+   "chars_without_intent": 5086,
+   "chars_with_intent": 3323,
+   "saved_fraction": 0.3466
+  },
+  {
+   "services_without_intent": 9,
+   "services_with_intent": 5,
+   "chars_without_intent": 4787,
+   "chars_with_intent": 3619,
+   "saved_fraction": 0.244
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 3,
+   "chars_without_intent": 5690,
+   "chars_with_intent": 3022,
+   "saved_fraction": 0.4689
+  },
+  {
+   "services_without_intent": 13,
+   "services_with_intent": 5,
+   "chars_without_intent": 5983,
+   "chars_with_intent": 3627,
+   "saved_fraction": 0.3938
+  },
+  {
+   "services_without_intent": 12,
+   "services_with_intent": 5,
+   "chars_without_intent": 5691,
+   "chars_with_intent": 3627,
+   "saved_fraction": 0.3627
+  },
+  {
+   "services_without_intent": 13,
+   "services_with_intent": 4,
+   "chars_without_intent": 5977,
+   "chars_with_intent": 3317,
+   "saved_fraction": 0.445
+  },
+  {
+   "services_without_intent": 8,
+   "services_with_intent": 3,
+   "chars_without_intent": 4496,
+   "chars_with_intent": 3022,
+   "saved_fraction": 0.3278
+  },
+  {
+   "services_without_intent": 9,
+   "services_with_intent": 4,
+   "chars_without_intent": 4793,
+   "chars_with_intent": 3320,
+   "saved_fraction": 0.3073
+  },
+  {
+   "services_without_intent": 13,
+   "services_with_intent": 4,
+   "chars_without_intent": 5975,
+   "chars_with_intent": 3327,
+   "saved_fraction": 0.4432
+  },
+  {
+   "services_without_intent": 11,
+   "services_with_intent": 3,
+   "chars_without_intent": 5389,
+   "chars_with_intent": 3022,
+   "saved_fraction": 0.4392
+  },
+  {
+   "services_without_intent": 9,
+   "services_with_intent": 4,
+   "chars_without_intent": 4782,
+   "chars_with_intent": 3315,
+   "saved_fraction": 0.3068
+  },
+  {
+   "services_without_intent": 7,
+   "services_with_intent": 4,
+   "chars_without_intent": 4199,
+   "chars_with_intent": 3327,
+   "saved_fraction": 0.2077
+  },
+  {
+   "services_without_intent": 9,
+   "services_with_intent": 3,
+   "chars_without_intent": 4784,
+   "chars_with_intent": 3022,
+   "saved_fraction": 0.3683
+  },
+  {
+   "services_without_intent": 13,
+   "services_with_intent": 5,
+   "chars_without_intent": 5991,
+   "chars_with_intent": 3617,
+   "saved_fraction": 0.3963
+  },
+  {
+   "services_without_intent": 8,
+   "services_with_intent": 3,
+   "chars_without_intent": 4487,
+   "chars_with_intent": 3019,
+   "saved_fraction": 0.3272
+  },
+  {
+   "services_without_intent": 11,
+   "services_with_intent": 5,
+   "chars_without_intent": 5400,
+   "chars_with_intent": 3635,
+   "saved_fraction": 0.3269
+  },
+  {
+   "services_without_intent": 10,
+   "services_with_intent": 4,
+   "chars_without_intent": 5087,
+   "chars_with_intent": 3318,
+   "saved_fraction": 0.3477
+  }
+ ]
+}

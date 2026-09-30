@@ -501,6 +501,8 @@ def eval_cmd(
         table.add_row("rollback fidelity", fmt(s["rollback"]["rollback_fidelity"]))
         table.add_row("remediation effectiveness (rules)",
                       fmt(s["rollback"]["remediation_effectiveness"]))
+        if "sysctl_persistence" in s["rollback"]:
+            table.add_row("sysctl persistence", fmt(s["rollback"]["sysctl_persistence"]))
     if "transactional" in s:
         table.add_row("auto-revert exact on failure", fmt(s["transactional"]["auto_revert_exact"]))
     if "intent" in s:
