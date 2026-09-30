@@ -8,7 +8,7 @@ handled with frozen, versioned corpora and a held-out set.
 
 | Asset | Source | Size (now) | Status |
 |---|---|---|---|
-| Weak-baseline lab | `demo/setup_lab.sh` on a snapshotted VM: sshd weakened, redis on 0.0.0.0, `/etc/shadow` 0644, ASLR off | 1 VM | exists |
+| Weak-baseline lab | `lab/setup_lab.sh` on a snapshotted VM: sshd weakened, redis on 0.0.0.0, `/etc/shadow` 0644, ASLR off | 1 VM | exists |
 | Injection corpus v1 | `corpus/injection_v1.json`, SHA-256 in `corpus/SHA256SUMS` | 34 cases: 22 regression + 12 coverage probes | **frozen 2026-09-26** |
 | Held-out corpus v2 | Written *after* the gate fix, ideally by someone other than the gate author | target ≥ 30 cases | planned (Review 2) |
 | Intent scenarios | Seeded: loopback→public drift, forbidden port opened, new listener, declared-but-missing | 4 types × ≥ 5 seeds | planned |

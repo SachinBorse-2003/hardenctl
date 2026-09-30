@@ -1,4 +1,4 @@
-"""Intent verdicts on seeded hosts, and the original demo test scripts."""
+"""Intent verdicts on seeded hosts, and the original test scripts."""
 
 import subprocess
 import sys
