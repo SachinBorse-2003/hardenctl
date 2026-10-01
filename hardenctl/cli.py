@@ -66,6 +66,33 @@ def ensure_key(provider: dict) -> str | None:
     return key
 
 
+def _load_plan(plan_file: str) -> Plan:
+    """Parse a plan file (gate 1). A failure is reported like any other
+    rejection, per action, and nothing is applied."""
+    from pydantic import ValidationError
+    from .validator import schema_reason
+    try:
+        raw = json.loads(Path(plan_file).read_text())
+    except (OSError, json.JSONDecodeError) as e:
+        console.print(f"[red]cannot read plan: {e}[/red]")
+        raise typer.Exit(1)
+    try:
+        return Plan(**raw)
+    except (ValidationError, TypeError):
+        console.print("[bold red]plan rejected — not applying[/bold red]")
+        actions = raw.get("actions", []) if isinstance(raw, dict) else []
+        shown = 0
+        for a in actions if isinstance(actions, list) else []:
+            reason = schema_reason(a)
+            if reason:
+                aid = a.get("id", "?") if isinstance(a, dict) else "?"
+                console.print(f"  [red]✗[/red] {aid} \\[schema] {reason}")
+                shown += 1
+        if not shown:
+            console.print("  [red]✗[/red] \\[schema] the plan document itself is malformed")
+        raise typer.Exit(1)
+
+
 @app.command()
 def configure(
     show: bool = typer.Option(False, "--show", help="Print current settings and exit."),
@@ -285,7 +312,7 @@ def plan(
     if result.rejections:
         console.print("\n[bold red]REJECTED[/bold red]")
         for r in result.rejections:
-            console.print(f"  [red]✗[/red] {r.action_id} [{r.gate}] {r.reason}")
+            console.print(f"  [red]✗[/red] {r.action_id} \\[{r.gate}] {r.reason}")
 
     console.print(f"\n[dim]{result.summary()}[/dim]")
 
@@ -301,13 +328,13 @@ def apply(
     dry_run: bool = typer.Option(False, "--dry-run", help="Show changes only."),
 ):
     """Validate and apply a plan, with automatic rollback on failure."""
-    p = Plan(**json.loads(Path(plan_file).read_text()))
+    p = _load_plan(plan_file)
     result = validate_plan(p)
 
     if result.rejections:
         console.print("[bold red]plan rejected — not applying[/bold red]")
         for r in result.rejections:
-            console.print(f"  [red]✗[/red] {r.action_id} [{r.gate}] {r.reason}")
+            console.print(f"  [red]✗[/red] {r.action_id} \\[{r.gate}] {r.reason}")
         raise typer.Exit(1)
 
     if dry_run:
