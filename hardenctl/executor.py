@@ -235,7 +235,15 @@ def sshd_syntax_error() -> str | None:
         r = subprocess.run(["sshd", "-t"], capture_output=True, text=True, timeout=30)
     except (OSError, subprocess.SubprocessError) as e:
         return f"sshd -t could not run: {e}"
-    return None if r.returncode == 0 else (r.stderr.strip() or "sshd -t failed")[:200]
+    if r.returncode == 0:
+        return None
+    err = r.stderr.strip()
+    # Ubuntu 24.04 starts sshd by socket activation; until the first
+    # connection /run/sshd does not exist and `sshd -t` fails on that alone.
+    # That says nothing about the config, so it is not a rejection.
+    if "privilege separation directory" in err:
+        return None
+    return (err or "sshd -t failed")[:200]
 
 
 # --------------------------------------------------------------------------

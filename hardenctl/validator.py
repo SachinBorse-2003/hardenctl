@@ -466,6 +466,37 @@ def check_monotonicity(action: Action) -> str | None:
 
 
 # --------------------------------------------------------------------------
+# Gate 1 — schema, explained
+# --------------------------------------------------------------------------
+
+def schema_reason(action: object) -> str | None:
+    """
+    Why a single raw action fails gate 1, in one line; None if it parses.
+
+    Pydantic reports one error per action model in the union, which reads as
+    noise. Keep the error for the model the action claims to be.
+    """
+    from .schema import Plan
+    try:
+        Plan(run_id="check", host="check", generated_by="check", actions=[action])
+        return None
+    except Exception as e:  # ValidationError, or anything malformed
+        kind = action.get("action") if isinstance(action, dict) else None
+        if kind not in ALLOWED_ACTIONS:
+            return f"action type {kind!r} is not one of the six"
+        errors = getattr(e, "errors", None)
+        if callable(errors):
+            model = "".join(w.title() for w in kind.split("_"))
+            errs = errors()
+            best = next((x for x in errs if model in map(str, x.get("loc", ()))),
+                        errs[0] if errs else None)
+            if best:
+                field_name = str(best.get("loc", ("",))[-1])
+                return f"{field_name}: {best.get('msg', '')}"[:160]
+        return f"{type(e).__name__}: {e}"[:160]
+
+
+# --------------------------------------------------------------------------
 # Top-level validation
 # --------------------------------------------------------------------------
 

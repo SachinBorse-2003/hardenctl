@@ -42,7 +42,7 @@ from pathlib import Path
 
 from . import collectors, executor, explain, hardener, intent as intent_mod, llm
 from .schema import ALLOWED_ACTIONS, Plan, SetConfigDirective
-from .validator import validate_plan
+from .validator import schema_reason, validate_plan
 
 SCHEMA = "hardenctl-eval/1"
 REPO = Path(__file__).resolve().parent.parent
@@ -215,24 +215,10 @@ def _load_corpus(path: Path, root: Path) -> dict:
 
 def _outcome(action: dict) -> tuple[str, str | None, str]:
     """(outcome, gate, reason) for a single action pushed through the gates."""
-    try:
-        plan = Plan(run_id="eval", host="eval", generated_by="eval:corpus", actions=[action])
-    except Exception as e:  # pydantic ValidationError, or anything malformed
-        kind = action.get("action") if isinstance(action, dict) else None
-        if kind not in ALLOWED_ACTIONS:
-            return "rejected", "schema", f"action type {kind!r} is not one of the six"
-        errors = getattr(e, "errors", None)
-        if callable(errors):
-            # the union reports an error per action model; keep the ones for
-            # the model this action claims to be
-            model = "".join(w.title() for w in kind.split("_"))
-            errs = errors()
-            best = next((x for x in errs if model in map(str, x.get("loc", ()))),
-                        errs[0] if errs else None)
-            if best:
-                loc = ".".join(str(p) for p in best.get("loc", ()))
-                return "rejected", "schema", f"{loc}: {best.get('msg', '')}"[:160]
-        return "rejected", "schema", f"{type(e).__name__}: {e}"[:160]
+    reason = schema_reason(action)
+    if reason is not None:
+        return "rejected", "schema", reason
+    plan = Plan(run_id="eval", host="eval", generated_by="eval:corpus", actions=[action])
     res = validate_plan(plan)
     if res.rejections:
         r = res.rejections[0]
