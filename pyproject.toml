@@ -18,5 +18,8 @@ hardenctl = "hardenctl.cli:main"
 [tool.setuptools.packages.find]
 include = ["hardenctl*"]
 
+[tool.setuptools.package-data]
+"hardenctl.gui" = ["static/*.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

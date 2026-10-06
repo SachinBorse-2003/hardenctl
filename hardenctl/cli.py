@@ -557,6 +557,21 @@ def eval_cmd(
         console.print(f"[green]wrote {f}[/green]")
 
 
+@app.command()
+def gui(
+    port: int = typer.Option(8765, help="Port on 127.0.0.1."),
+    no_open: bool = typer.Option(False, "--no-open", help="Do not open a browser."),
+):
+    """Open the local web dashboard (127.0.0.1 only, per-session token)."""
+    from . import gui as gui_mod
+    try:
+        gui_mod.serve(port=port, open_browser=not no_open)
+    except OSError as e:
+        console.print(f"[red]cannot listen on 127.0.0.1:{port}: {e.strerror}. "
+                      f"Try --port 8766.[/red]")
+        raise typer.Exit(1)
+
+
 def main():
     app()
 

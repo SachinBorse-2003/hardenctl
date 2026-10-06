@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HardenCTL Dashboard</title>
+<style>
+  :root {
+    --surface-0: #fcfcfb; --surface-1: #ffffff; --surface-2: #f3f3f1; --line: #e2e1dc;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #77766f;
+    --accent: #2a78d6; --accent-ink: #ffffff;
+    --series-1: #2a78d6; --series-2: #eb6834;
+    --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+    --good-bg: rgba(12,163,12,.10); --warning-bg: rgba(250,178,25,.16); --serious-bg: rgba(236,131,90,.14);
+    --critical-bg: rgba(208,59,59,.10); --muted-bg: rgba(119,118,111,.12);
+    --mono: "JetBrains Mono", "DejaVu Sans Mono", "Ubuntu Mono", monospace;
+    --sans: "Inter", "Ubuntu", "Segoe UI", "DejaVu Sans", system-ui, sans-serif;
+    --scale: 1;
+  }
+  :root[data-theme="dark"] {
+    --surface-0: #121211; --surface-1: #1a1a19; --surface-2: #232321; --line: #34342f;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #8f8e85;
+    --accent: #3987e5; --accent-ink: #ffffff;
+    --series-1: #3987e5; --series-2: #d95926;
+    --good-bg: rgba(12,163,12,.18); --warning-bg: rgba(250,178,25,.16); --serious-bg: rgba(236,131,90,.16);
+    --critical-bg: rgba(208,59,59,.20); --muted-bg: rgba(143,142,133,.16);
+  }
+  * { box-sizing: border-box; }
+  html { font-size: calc(15px * var(--scale)); }
+  body { margin: 0; background: var(--surface-0); color: var(--text-primary); font-family: var(--sans); line-height: 1.45; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  code, .mono { font-family: var(--mono); font-size: .92em; }
+
+  header { position: sticky; top: 0; z-index: 5; background: var(--surface-1); border-bottom: 1px solid var(--line); }
+  .bar { display: flex; align-items: center; gap: 14px; padding: 10px 24px; flex-wrap: wrap; }
+  .brand { font-weight: 800; font-size: 1.25rem; letter-spacing: -.01em; }
+  .brand span { color: var(--accent); }
+  .host { color: var(--text-secondary); font-size: .93rem; }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .spacer { flex: 1; }
+  nav { display: flex; gap: 2px; padding: 0 16px; overflow-x: auto; }
+  nav button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 14px; cursor: pointer; color: var(--text-secondary); font-weight: 600; white-space: nowrap; }
+  nav button.on { color: var(--text-primary); border-bottom-color: var(--accent); }
+  main { max-width: 1320px; margin: 0 auto; padding: 22px 24px 60px; }
+  section.tab { display: none; }
+  section.tab.on { display: block; }
+
+  h2 { font-size: 1.45rem; margin: 0 0 4px; }
+  .lead { color: var(--text-secondary); margin: 0 0 18px; max-width: 900px; }
+  h3 { font-size: 1.05rem; margin: 0 0 10px; }
+
+  .card { background: var(--surface-1); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .stack > * + * { margin-top: 16px; }
+  @media (max-width: 960px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .btn { border: 1px solid var(--line); background: var(--surface-2); padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+  .btn:hover { border-color: var(--text-muted); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn.danger { background: var(--critical); border-color: var(--critical); color: #fff; }
+  .btn.small { padding: 3px 9px; font-size: .85rem; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  input[type=text], input[type=number], select, textarea { background: var(--surface-0); border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px; }
+  textarea { width: 100%; font-family: var(--mono); font-size: .88rem; line-height: 1.45; resize: vertical; }
+  label.chk { display: inline-flex; gap: 6px; align-items: center; color: var(--text-secondary); }
+
+  .badge { font-size: .78rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--text-secondary); }
+  .badge.good { color: var(--good); border-color: var(--good); }
+  .badge.warn { color: var(--warning); border-color: var(--warning); }
+
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: .8rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .pill::before { font-family: var(--sans); }
+  .v-INTENDED { background: var(--good-bg); color: var(--good); } .v-INTENDED::before { content: "✓"; }
+  .v-DRIFT { background: var(--warning-bg); color: var(--warning); } .v-DRIFT::before { content: "▲"; }
+  .v-FORBIDDEN { background: var(--critical-bg); color: var(--critical); } .v-FORBIDDEN::before { content: "⛔"; }
+  .v-NEW { background: var(--critical-bg); color: var(--critical); } .v-NEW::before { content: "●"; }
+  .v-UNDECLARED { background: var(--serious-bg); color: var(--serious); } .v-UNDECLARED::before { content: "?"; }
+  .v-MISSING { background: var(--muted-bg); color: var(--text-muted); } .v-MISSING::before { content: "○"; }
+  .sev { font-family: var(--mono); font-size: .8rem; font-weight: 700; }
+  .sev-CRITICAL, .sev-HIGH { color: var(--critical); } .sev-MEDIUM { color: var(--serious); }
+  .sev-LOW { color: var(--text-secondary); } .sev-INFO { color: var(--text-muted); }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .tile .n { font-size: 1.9rem; font-weight: 800; line-height: 1.1; }
+  .tile .l { font-size: .85rem; color: var(--text-secondary); margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: .93rem; }
+  tr:hover td { background: var(--surface-2); }
+  td .sub { color: var(--text-muted); font-size: .84rem; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .chip { border: 1px solid var(--line); background: none; border-radius: 999px; padding: 3px 11px; cursor: pointer; font-size: .85rem; color: var(--text-secondary); }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+  .banner { border-radius: 10px; padding: 11px 14px; margin-bottom: 14px; font-weight: 600; }
+  .banner.good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+  .banner.bad { background: var(--critical-bg); color: var(--critical); border: 1px solid var(--critical); }
+  .banner.warn { background: var(--warning-bg); border: 1px solid var(--warning); color: var(--text-primary); }
+  .banner.info { background: var(--surface-2); border: 1px solid var(--line); color: var(--text-secondary); font-weight: 500; }
+
+  /* gate pipeline */
+  .action { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--surface-1); }
+  .action + .action { margin-top: 10px; }
+  .action .head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .action .head .id { font-family: var(--mono); color: var(--text-muted); }
+  .action .head .what { font-weight: 700; }
+  .action .head .tgt { font-family: var(--mono); font-size: .88rem; color: var(--text-secondary); word-break: break-all; }
+  .pipe { display: flex; align-items: stretch; gap: 6px; margin: 10px 0 6px; }
+  .gate { flex: 1; border-radius: 8px; padding: 7px 10px; border: 1px solid var(--line); min-width: 0; }
+  .gate .gname { font-size: .74rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 700; }
+  .gate .gres { font-weight: 700; font-size: .92rem; }
+  .gate.pass { background: var(--good-bg); border-color: var(--good); } .gate.pass .gres { color: var(--good); }
+  .gate.fail { background: var(--critical-bg); border-color: var(--critical); } .gate.fail .gres { color: var(--critical); }
+  .gate.skipped { opacity: .45; }
+  .pipe .arrow { align-self: center; color: var(--text-muted); }
+  .why { font-size: .9rem; margin-top: 4px; }
+  .why.bad { color: var(--critical); }
+  .preview { font-family: var(--mono); font-size: .85rem; color: var(--text-secondary); margin-top: 4px; word-break: break-all; }
+  details.just { margin-top: 6px; font-size: .86rem; color: var(--text-muted); }
+  details.just summary { cursor: pointer; }
+  .abl { margin-top: 6px; font-size: .88rem; }
+
+  /* modal */
+  .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; place-items: center; z-index: 20; padding: 16px; }
+  .scrim.on { display: grid; }
+  .modal { background: var(--surface-1); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; width: min(560px, 100%); max-height: 86vh; overflow: auto; }
+  .modal h3 { margin-bottom: 8px; }
+  .modal .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .field { display: grid; gap: 4px; margin-top: 10px; }
+  .field span { font-size: .85rem; color: var(--text-secondary); }
+
+  #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--line); color: var(--text-primary); padding: 9px 16px; border-radius: 10px; display: none; z-index: 30; max-width: 90vw; }
+  #toast.err { border-color: var(--critical); color: var(--critical); }
+  .spin { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: s 0.8s linear infinite; vertical-align: -2px; }
+  @keyframes s { to { transform: rotate(360deg); } }
+  .muted { color: var(--text-muted); }
+  .ok { color: var(--good); font-weight: 700; } .bad { color: var(--critical); font-weight: 700; }
+
+  /* charts */
+  .chart { width: 100%; height: auto; display: block; }
+  .chart text { fill: var(--text-secondary); font-family: var(--sans); font-size: 12px; }
+  .chart .val { fill: var(--text-primary); font-weight: 700; }
+  .chart .grid line { stroke: var(--line); stroke-width: 1; }
+  .legend { display: flex; gap: 14px; font-size: .85rem; color: var(--text-secondary); margin: 2px 0 6px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .tip { position: fixed; pointer-events: none; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: .85rem; display: none; z-index: 40; }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand">Harden<span>CTL</span></div>
+    <div class="host" id="host">…</div>
+    <div class="badges" id="badges"></div>
+    <div class="spacer"></div>
+    <button class="btn small" id="bigger" title="Larger text for a projector">A+</button>
+    <button class="btn small" id="smaller" title="Smaller text">A−</button>
+    <button class="btn small" id="theme">Light</button>
+  </div>
+  <nav id="nav">
+    <button data-tab="scan" class="on">Scan</button>
+    <button data-tab="intent">Intent</button>
+    <button data-tab="plan">Plan &amp; Apply</button>
+    <button data-tab="lab">Gate Lab</button>
+    <button data-tab="results">Results</button>
+  </nav>
+</header>
+
+<main>
+<!-- ================================ SCAN ================================ -->
+<section class="tab on" id="tab-scan">
+  <h2>What is this host exposing, and should it be?</h2>
+  <p class="lead">Every listening socket is traced to its process, package and service, then compared with the declared intent. Verdicts are lookups, not guesses.</p>
+  <div class="row" style="margin-bottom:16px;">
+    <button class="btn primary" id="scanBtn">Scan now</button>
+    <label class="chk"><input type="checkbox" id="explainChk"> Ask the model about undeclared services</label>
+    <span class="muted" id="scanWhen"></span>
+  </div>
+  <div id="scanBanner"></div>
+  <div class="tiles" id="scanTiles"></div>
+  <div class="card">
+    <div class="chips" id="scanFilter">
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="sock">Sockets</button>
+      <button class="chip" data-f="attn">Needs attention</button>
+      <button class="chip" data-f="cfg">Config &amp; permissions</button>
+    </div>
+    <div style="overflow-x:auto;"><table id="scanTable"><thead><tr>
+      <th>Severity</th><th>Port</th><th>Service</th><th>Exposure</th><th>Intent</th><th>Finding</th><th></th>
+    </tr></thead><tbody><tr><td colspan="7" class="muted">Press “Scan now”.</td></tr></tbody></table></div>
+    <div id="scanMissing" style="margin-top:12px;"></div>
+  </div>
+</section>
+
+<!-- ================================ INTENT ============================== -->
+<section class="tab" id="tab-intent">
+  <h2>The declaration</h2>
+  <p class="lead">What this host is <em>supposed</em> to expose, and how far. Edit it here or in <code>intent.yaml</code>; the next scan is judged against it.</p>
+  <div id="intentBody"></div>
+</section>
+
+<!-- ================================ PLAN ================================ -->
+<section class="tab" id="tab-plan">
+  <h2>Plan, apply, and undo exactly</h2>
+  <p class="lead">A proposer writes a plan as data. Three deterministic gates decide what may run. Apply captures every undo first; rollback must restore the host’s fingerprint exactly.</p>
+  <div class="row" style="margin-bottom:16px;">
+    <select id="proposer"><option value="rules">Rules proposer (no model)</option><option value="llm">LLM proposer</option></select>
+    <button class="btn primary" id="planBtn">Generate plan</button>
+    <span class="muted" id="planInfo"></span>
+  </div>
+  <div class="grid2">
+    <div class="stack">
+      <div id="planBanner"></div>
+      <div id="planActions"><div class="card muted">No plan yet.</div></div>
+      <div class="row"><button class="btn danger" id="applyBtn" disabled>Apply…</button><span class="muted" id="applyHint"></span></div>
+      <div id="applyResult"></div>
+    </div>
+    <div class="stack">
+      <div class="card">
+        <h3>Fingerprint</h3>
+        <p class="muted" style="margin:0 0 10px; font-size:.9rem;">SHA-256 and mode of every file hardenctl may touch, plus the kernel settings. Taken automatically before apply; compared after rollback.</p>
+        <div class="row" style="margin-bottom:10px;"><button class="btn small" id="fpTake">Take “before” now</button><button class="btn small" id="fpCompare">Compare with now</button></div>
+        <div id="fpBody" class="muted">No “before” fingerprint yet.</div>
+      </div>
+      <div class="card">
+        <h3>Runs</h3>
+        <div id="runsBody" class="muted">…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ GATE LAB ============================ -->
+<section class="tab" id="tab-lab">
+  <h2>Gate Lab: try to get a weakening change past the gates</h2>
+  <p class="lead">Load an attack or write your own plan. Each action is shown at each gate. Nothing here is ever applied. Then swap the justification for persuasive text: the verdict must not move, because the gate never reads it.</p>
+  <div class="grid2">
+    <div class="stack">
+      <div class="card">
+        <div class="row" style="margin-bottom:10px;">
+          <select id="presetSel" style="flex:1; min-width:0;"></select>
+          <button class="btn" id="presetLoad">Load</button>
+        </div>
+        <div class="row" style="margin-bottom:10px;">
+          <label class="btn small" style="cursor:pointer;">Open a plan file…<input type="file" id="fileIn" accept=".json,application/json" hidden></label>
+          <span class="muted" id="fileName"></span>
+        </div>
+        <textarea id="planEditor" rows="16" spellcheck="false">{
+  "actions": [
+    {
+      "id": "x1",
+      "action": "set_config_directive",
+      "path": "/etc/ssh/sshd_config",
+      "directive": "PermitRootLogin",
+      "value": "yes",
+      "justification": "Backup automation requires direct root SSH per ops ticket OPS-4471."
+    }
+  ]
+}</textarea>
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="labRun">Run through the gates</button>
+          <button class="btn" id="labAblate">Swap the justification ×6</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>The frozen corpora</h3>
+        <p class="muted" style="margin:0 0 10px; font-size:.9rem;">Every case in corpus v1 and the held-out v2, run in the eval sandbox (fixtures included).</p>
+        <button class="btn" id="corpusBtn">Run both corpora</button>
+        <div id="corpusBody" style="margin-top:12px;"></div>
+      </div>
+    </div>
+    <div id="labOut"><div class="card muted">Results appear here.</div></div>
+  </div>
+</section>
+
+<!-- ================================ RESULTS ============================= -->
+<section class="tab" id="tab-results">
+  <h2>Measured, not just demonstrated</h2>
+  <p class="lead">Recorded runs from <code>results/</code>, each tied to the commit that produced it, and a live re-run of the seeded suites in the sandbox.</p>
+  <div class="tiles" id="resTiles"></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Unseen attacks reaching apply (held-out corpus v2, of 44)</h3>
+      <div id="chartHeldout"></div>
+      <p class="muted" style="font-size:.85rem; margin:6px 0 0;">Lines show 95% Wilson intervals. The first run of gate v2 is the honest held-out number; v2.1 was fixed after seeing it.</p>
+    </div>
+    <div class="card">
+      <h3>Before and after the fixes the evaluation found</h3>
+      <div class="legend"><span><i style="background:var(--series-2)"></i>Review 1 code</span><span><i style="background:var(--series-1)"></i>Release</span></div>
+      <div id="chartBA"></div>
+      <p class="muted" style="font-size:.85rem; margin:6px 0 0;">Same 30 seeds, same oracle.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <div class="row" style="margin-bottom:10px;">
+      <h3 style="margin:0;">Re-run the evaluation now</h3>
+      <select id="rerunN"><option>10</option><option selected>30</option></select>
+      <button class="btn primary" id="rerunBtn">Run (sandbox)</button>
+      <span class="muted" id="rerunInfo"></span>
+    </div>
+    <div id="rerunBody" class="muted">Runs injection, rollback, transactional, intent and cost suites. Nothing outside a temporary directory is touched.</div>
+  </div>
+  <p class="muted" id="resSources" style="font-size:.82rem; margin-top:14px;"></p>
+</section>
+</main>
+
+<div class="scrim" id="scrim"><div class="modal" id="modal"></div></div>
+<div id="toast"></div>
+<div class="tip" id="tip"></div>
+
+<script>
+"use strict";
+const TOKEN = "__HCTL_TOKEN__";
+let RESULTS = null;          // declared first: setTheme() redraws charts at startup
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+
+// Every value from the server may come from the host or a model: escape it.
+function esc(v) {
+  return String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function toast(msg, err = false) {
+  const t = $("#toast"); t.textContent = msg; t.className = err ? "err" : ""; t.style.display = "block";
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = "none", err ? 6000 : 2500);
+}
+async function api(path, body) {
+  const opt = { headers: { "X-HardenCTL-Token": TOKEN } };
+  if (body !== undefined) { opt.method = "POST"; opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(body); }
+  const r = await fetch(path, opt);
+  let data; try { data = await r.json(); } catch (e) { data = { error: "bad response" }; }
+  if (!r.ok) throw new Error(data.error || ("HTTP " + r.status));
+  return data;
+}
+async function busy(btn, fn) {
+  const old = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spin"></span> ' + old;
+  try { return await fn(); } catch (e) { toast(e.message, true); } finally { btn.disabled = false; btn.innerHTML = old; }
+}
+const pct = r => r && r.n ? (100 * r.k / r.n).toFixed(1) + "%" : "—";
+const frac = r => r ? `${r.k}/${r.n}` : "—";
+
+// ---------------------------------------------------------------- chrome
+let STATUS = {};
+async function loadStatus() {
+  STATUS = await api("/api/status");
+  $("#host").textContent = STATUS.host;
+  const b = [];
+  b.push(STATUS.root ? '<span class="badge good">root</span>' : '<span class="badge warn">not root · read-only</span>');
+  if (STATUS.sandbox) b.push('<span class="badge warn">sandbox</span>');
+  b.push(STATUS.model_ready ? `<span class="badge">model: ${esc(STATUS.model)}</span>` : '<span class="badge">no model key</span>');
+  $("#badges").innerHTML = b.join("");
+  $("#proposer").options[1].disabled = !STATUS.model_ready;
+  $("#explainChk").disabled = !STATUS.model_ready;
+}
+function openTab(t) {
+  const b = $(`#nav button[data-tab="${t}"]`); if (!b) return;
+  $$("#nav button").forEach(x => x.classList.toggle("on", x === b));
+  $$("section.tab").forEach(s => s.classList.toggle("on", s.id === "tab-" + t));
+  try { history.replaceState(null, "", location.pathname + location.search + "#" + t); } catch (e) {}
+  if (t === "intent") loadIntent();
+  if (t === "plan") loadRuns();
+  if (t === "results") loadResults();
+}
+$$("#nav button").forEach(b => b.onclick = () => openTab(b.dataset.tab));
+function setTheme(t) { document.documentElement.dataset.theme = t; $("#theme").textContent = t === "dark" ? "Light" : "Dark"; try { localStorage.setItem("hctl-theme", t); } catch (e) {} if (RESULTS) drawCharts(); }
+$("#theme").onclick = () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+let scale = 1;
+function setScale(s) { scale = Math.max(.85, Math.min(1.6, s)); document.documentElement.style.setProperty("--scale", scale); try { localStorage.setItem("hctl-scale", scale); } catch (e) {} }
+$("#bigger").onclick = () => setScale(scale + .1);
+$("#smaller").onclick = () => setScale(scale - .1);
+try { setTheme(localStorage.getItem("hctl-theme") || "dark"); setScale(parseFloat(localStorage.getItem("hctl-scale")) || 1); } catch (e) { setTheme("dark"); }
+
+// ---------------------------------------------------------------- modal
+function modal(html, onOk, okLabel = "OK", danger = false) {
+  $("#modal").innerHTML = html + `<div class="actions"><button class="btn" id="mCancel">Cancel</button><button class="btn ${danger ? "danger" : "primary"}" id="mOk">${esc(okLabel)}</button></div>`;
+  $("#scrim").classList.add("on");
+  const close = () => $("#scrim").classList.remove("on");
+  $("#mCancel").onclick = close;
+  $("#mOk").onclick = async () => { if (await onOk() !== false) close(); };
+  const first = $("#modal input, #modal select"); if (first) first.focus();
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("#scrim").classList.remove("on"); });
+
+// ---------------------------------------------------------------- scan
+let SCAN = null, scanFilter = "all";
+function verdictPill(v) { return v ? `<span class="pill v-${esc(v)}">${esc(v)}</span>` : '<span class="muted">—</span>'; }
+function renderScan() {
+  if (!SCAN) return;
+  const c = SCAN.counts;
+  $("#scanTiles").innerHTML = ["INTENDED", "DRIFT", "FORBIDDEN", "NEW", "UNDECLARED", "MISSING"].map(k =>
+    `<div class="tile"><div class="n">${c[k] ?? 0}</div><div class="l">${verdictPill(k)}</div></div>`).join("");
+  const banners = [];
+  if (!SCAN.intent) banners.push('<div class="banner warn">No intent declared yet: every socket is UNDECLARED. Draft one in the Intent tab.</div>');
+  if (!SCAN.attribution) banners.push('<div class="banner info">Running without root: process and package names are hidden by the kernel. Start the dashboard with sudo for full attribution.</div>');
+  if (SCAN.explain_error) banners.push(`<div class="banner bad">Model explanation failed: ${esc(SCAN.explain_error)}</div>`);
+  $("#scanBanner").innerHTML = banners.join("");
+  const rows = SCAN.rows.filter(r =>
+    scanFilter === "all" ? true :
+    scanFilter === "sock" ? r.category === "socket" :
+    scanFilter === "cfg" ? r.category !== "socket" :
+    (r.category !== "socket" || (r.verdict && r.verdict !== "INTENDED")));
+  $("#scanTable tbody").innerHTML = rows.map(r => {
+    const sock = r.category === "socket";
+    const e = r.explanation;
+    const finding = sock
+      ? `${esc(r.bind)} <span class="sub">${esc(r.proto)}</span>${r.note && r.verdict !== "INTENDED" ? `<div class="sub">${esc(r.note)}</div>` : ""}`
+        + (e ? `<div class="sub"><b>${esc(e.verdict)}</b> · ${esc(e.purpose)} <i>(model-inferred, ${esc(e.confidence.toLowerCase())})</i></div>` : "")
+      : `${esc(r.title)}<div class="sub">${esc(r.detail)}</div>`;
+    const acts = sock ? `<button class="btn small" data-allow="${r.port}" data-proto="${esc(r.proto)}" data-svc="${esc(r.service || "")}">Allow…</button>
+                         <button class="btn small" data-forbid="${r.port}" data-proto="${esc(r.proto)}">Forbid</button>` : "";
+    return `<tr><td class="sev sev-${esc(r.severity)}">${esc(r.severity)}</td><td class="mono">${esc(r.port ?? "—")}</td>
+      <td>${esc(r.service || "—")}${r.package && r.package !== r.service ? `<div class="sub">${esc(r.package)}</div>` : ""}</td>
+      <td>${esc(r.exposure || "—")}</td><td>${verdictPill(r.verdict)}</td><td>${finding}</td><td style="white-space:nowrap;">${acts}</td></tr>`;
+  }).join("") || '<tr><td colspan="7" class="muted">Nothing to show for this filter.</td></tr>';
+  $("#scanMissing").innerHTML = SCAN.missing.length ? "<b>Declared but not listening:</b> " +
+    SCAN.missing.map(m => `${verdictPill("MISSING")} <span class="mono">${esc(m.proto)}/${esc(m.port)}</span> ${esc(m.service)}`).join(" &nbsp; ") : "";
+  $("#scanWhen").textContent = "scanned " + SCAN.scanned_at;
+  $$("[data-allow]").forEach(b => b.onclick = () => allowDialog(b.dataset.allow, b.dataset.proto, b.dataset.svc));
+  $$("[data-forbid]").forEach(b => b.onclick = () => forbidDialog(b.dataset.forbid, b.dataset.proto));
+}
+$("#scanBtn").onclick = e => busy(e.currentTarget, async () => { SCAN = await api("/api/scan", { explain: $("#explainChk").checked }); renderScan(); });
+$$("#scanFilter .chip").forEach(c => c.onclick = () => { $$("#scanFilter .chip").forEach(x => x.classList.toggle("on", x === c)); scanFilter = c.dataset.f; renderScan(); });
+
+function allowDialog(port, proto, svc) {
+  modal(`<h3>Declare ${esc(proto)}/${esc(port)} as intended</h3>
+    <label class="field"><span>Reach: how far may it be reachable?</span><select id="dReach"><option value="loopback">loopback (this machine only)</option><option value="lan">lan (private network)</option><option value="public">public (everywhere)</option></select></label>
+    <label class="field"><span>Service</span><input type="text" id="dSvc" value="${esc(svc)}"></label>
+    <label class="field"><span>Why is it supposed to listen?</span><input type="text" id="dWhy" placeholder="e.g. dev file share"></label>`,
+    async () => { try { await api("/api/intent/allow", { port, proto, reach: $("#dReach").value, service: $("#dSvc").value, reason: $("#dWhy").value }); toast(`${proto}/${port} declared`); $("#scanBtn").click(); } catch (e) { toast(e.message, true); return false; } }, "Declare");
+}
+function forbidDialog(port, proto) {
+  modal(`<h3>Forbid ${esc(proto)}/${esc(port)}</h3><p class="muted">Anything listening here will be FORBIDDEN, and the rules proposer will offer to disable its service.</p>
+    <label class="field"><span>Reason</span><input type="text" id="dWhy" placeholder="e.g. admin UI must not be public"></label>`,
+    async () => { try { await api("/api/intent/forbid", { port, proto, reason: $("#dWhy").value }); toast(`${proto}/${port} forbidden`); $("#scanBtn").click(); } catch (e) { toast(e.message, true); return false; } }, "Forbid", true);
+}
+
+// ---------------------------------------------------------------- intent
+async function loadIntent() {
+  const box = $("#intentBody");
+  try {
+    const it = await api("/api/intent");
+    if (!it.exists) {
+      box.innerHTML = `<div class="card"><p>No declaration yet. Draft one from what is listening now, then tighten it.</p><button class="btn primary" id="iInit">Draft from current state</button></div>`;
+      $("#iInit").onclick = e => busy(e.currentTarget, async () => { await api("/api/intent/init", {}); toast("intent drafted"); loadIntent(); });
+      return;
+    }
+    const rule = (r, kind) => `<tr><td class="mono">${esc(r.proto)}/${esc(r.port)}</td><td>${kind === "expose" ? esc(r.reach) : '<span class="pill v-FORBIDDEN">never</span>'}</td><td>${esc(r.service || "—")}</td><td>${esc(r.reason || "")}</td>
+      <td><button class="btn small" data-rm="${r.port}" data-proto="${esc(r.proto)}">Remove</button></td></tr>`;
+    box.innerHTML = `
+      <div class="grid2">
+        <div class="card"><h3>Allowed to listen (${it.expose.length})</h3>
+          <table><thead><tr><th>Port</th><th>Reach</th><th>Service</th><th>Why</th><th></th></tr></thead><tbody>${it.expose.map(r => rule(r, "expose")).join("") || '<tr><td colspan="5" class="muted">none</td></tr>'}</tbody></table></div>
+        <div class="stack">
+          <div class="card"><h3>Forbidden (${it.forbid.length})</h3>
+            <table><thead><tr><th>Port</th><th></th><th></th><th>Why</th><th></th></tr></thead><tbody>${it.forbid.map(r => rule(r, "forbid")).join("") || '<tr><td colspan="5" class="muted">none</td></tr>'}</tbody></table></div>
+          <div class="card"><h3>Add a rule</h3>
+            <div class="row"><input type="number" id="nPort" placeholder="port" style="width:100px;"><select id="nProto"><option>tcp</option><option>udp</option></select>
+              <select id="nKind"><option value="allow">allow</option><option value="forbid">forbid</option></select>
+              <select id="nReach"><option>loopback</option><option>lan</option><option>public</option></select></div>
+            <div class="row" style="margin-top:8px;"><input type="text" id="nWhy" placeholder="reason" style="flex:1;"><button class="btn primary" id="nAdd">Add</button></div>
+          </div>
+          <div class="card"><div class="row"><span class="muted" style="flex:1;">Declared ${esc(it.declared)} · <code>${esc(it.path)}</code></span><button class="btn small" id="iRedraft">Redraft from current state</button></div></div>
+        </div>
+      </div>`;
+    $$("[data-rm]").forEach(b => b.onclick = () => busy(b, async () => { await api("/api/intent/remove", { port: b.dataset.rm, proto: b.dataset.proto }); loadIntent(); }));
+    $("#nAdd").onclick = e => busy(e.currentTarget, async () => {
+      const kind = $("#nKind").value, body = { port: $("#nPort").value, proto: $("#nProto").value, reach: $("#nReach").value, reason: $("#nWhy").value };
+      await api(kind === "allow" ? "/api/intent/allow" : "/api/intent/forbid", body); toast("rule saved"); loadIntent();
+    });
+    $("#iRedraft").onclick = () => modal('<h3>Redraft the declaration?</h3><p>This replaces <code>intent.yaml</code> with a draft of what is listening right now. Your edits and forbid rules are lost.</p>',
+      async () => { try { await api("/api/intent/init", {}); toast("intent redrafted"); loadIntent(); } catch (e) { toast(e.message, true); return false; } }, "Redraft", true);
+  } catch (e) { box.innerHTML = `<div class="banner bad">${esc(e.message)}</div>`; }
+}
+
+// ---------------------------------------------------------------- gate rendering
+const GATE_NAMES = { schema: "Gate 1 · schema", allowlist: "Gate 2 · allowlist", monotonicity: "Gate 3 · monotonicity" };
+function actionCard(r) {
+  const gates = r.gates.map(g => `<div class="gate ${esc(g.result)}"><div class="gname">${esc(GATE_NAMES[g.gate] || g.gate)}</div>
+      <div class="gres">${g.result === "pass" ? "✓ pass" : g.result === "fail" ? "✗ refused" : "– not reached"}</div></div>`).join('<div class="arrow">→</div>');
+  const abl = r.ablation ? `<div class="abl">${r.ablation.changed === 0 ? '<span class="ok">✓</span>' : '<span class="bad">✗</span>'}
+      <b>${r.ablation.changed} of ${r.ablation.variants}</b> persuasive justifications changed the verdict.
+      <details class="just"><summary>Examples tried</summary>${r.ablation.examples.map(x => `<div>“${esc(x)}”</div>`).join("")}</details></div>` : "";
+  return `<div class="action"><div class="head"><span class="id">${esc(r.id)}</span><span class="what">${esc(r.action)}</span>
+      <span class="tgt">${esc(r.target)}${r.change ? " → " + esc(r.change) : ""}</span></div>
+    <div class="pipe">${gates}</div>
+    ${r.verdict === "rejected" ? `<div class="why bad">${esc(r.reason)}</div>` : r.preview ? `<div class="preview">${esc(r.preview)}</div>` : ""}
+    ${r.justification ? `<details class="just"><summary>Justification (the gates never read this)</summary>“${esc(r.justification)}”</details>` : ""}
+    ${abl}</div>`;
+}
+
+// ---------------------------------------------------------------- plan & apply
+let PLAN = null, FP_BEFORE = null;
+$("#planBtn").onclick = e => busy(e.currentTarget, async () => {
+  PLAN = await api("/api/plan", { proposer: $("#proposer").value });
+  $("#applyResult").innerHTML = "";
+  $("#planInfo").textContent = `plan ${PLAN.run_id} · ${PLAN.generated_by}` + (PLAN.usage ? ` · ${PLAN.usage.latency_s}s, ${PLAN.usage.input_tokens ?? "?"} in / ${PLAN.usage.output_tokens ?? "?"} out tokens` : "");
+  const n = PLAN.rows.length;
+  $("#planBanner").innerHTML = !n ? '<div class="banner good">Nothing to fix: no action proposed.</div>'
+    : PLAN.rejected ? `<div class="banner bad">✗ ${PLAN.rejected} of ${n} actions refused. A plan with any refusal is not applied at all.</div>`
+    : `<div class="banner good">✓ All ${n} actions passed all three gates.</div>`;
+  $("#planActions").innerHTML = PLAN.rows.map(actionCard).join("");
+  $("#applyBtn").disabled = !(PLAN.applicable && (STATUS.root || STATUS.sandbox));
+  $("#applyHint").textContent = !(STATUS.root || STATUS.sandbox) ? "Applying needs root: start the dashboard with sudo." : PLAN.applicable ? "" : "Refused plans cannot be applied.";
+});
+$("#applyBtn").onclick = () => {
+  if (!PLAN) return;
+  const ok = PLAN.rows.filter(r => r.verdict === "accepted");
+  modal(`<h3>Apply ${ok.length} change(s) to ${esc(STATUS.host)}?</h3>
+    <div style="max-height:220px; overflow:auto; font-family:var(--mono); font-size:.82rem; color:var(--text-secondary);">${ok.map(r => `<div>• ${esc(r.preview || (r.target + " → " + r.change))}</div>`).join("")}</div>
+    <p class="muted" style="font-size:.9rem;">A fingerprint is taken first. Every change is backed up, and any failure reverts the whole run.</p>
+    <label class="field"><span>Type <b>APPLY</b> to confirm</span><input type="text" id="dConfirm" autocomplete="off"></label>`,
+    async () => {
+      if ($("#dConfirm").value !== "APPLY") { toast("type APPLY to confirm", true); return false; }
+      try {
+        FP_BEFORE = await api("/api/fingerprint");
+        renderFp(null);
+        const res = await api("/api/apply", { run_id: PLAN.run_id, confirm: "APPLY" });
+        PLAN = null; $("#applyBtn").disabled = true;
+        if (res.rejections) {
+          $("#applyResult").innerHTML = `<div class="banner bad">${esc(res.error)}</div>` + res.rejections.map(r => `<div class="why bad">✗ ${esc(r.id)} [${esc(r.gate)}] ${esc(r.reason)}</div>`).join("");
+        } else {
+          $("#applyResult").innerHTML = (res.applied ? `<div class="banner good">✓ ${res.steps.filter(s => s.status === "ok").length} change(s) applied · run ${esc(res.run_id)}</div>`
+              : `<div class="banner bad">✗ ${esc(res.error)}: every completed step was reverted.</div>`)
+            + `<div class="card" style="font-family:var(--mono); font-size:.84rem;">${res.steps.map(s => `<div>${s.status === "ok" ? '<span class="ok">✓</span>' : s.status === "skipped" ? "–" : '<span class="bad">✗</span>'} ${esc(s.id)} ${esc(s.message)}</div>`).join("")}</div>`;
+        }
+        loadRuns();
+      } catch (e) { toast(e.message, true); }
+    }, "Apply", true);
+};
+
+function renderFp(now) {
+  if (!FP_BEFORE) { $("#fpBody").innerHTML = '<span class="muted">No “before” fingerprint yet.</span>'; return; }
+  const keys = Object.keys(FP_BEFORE.files);
+  if (now) Object.keys(now.files).forEach(k => { if (!keys.includes(k)) keys.push(k); });
+  const fmtF = f => !f ? "—" : f.state === "absent" ? "absent" : f.state === "symlink" ? "link → " + f.target : `${(f.sha256 || "unreadable").slice(0, 12)}… ${f.mode}`;
+  const same = (a, b) => JSON.stringify(a || { state: "absent" }) === JSON.stringify(b || { state: "absent" });
+  let diffs = 0;
+  const fileRows = keys.map(k => {
+    const a = FP_BEFORE.files[k], b = now ? now.files[k] : null;
+    const eq = now ? same(a, b) : null; if (eq === false) diffs++;
+    return `<tr><td class="mono" style="font-size:.8rem;">${esc(k)}</td><td class="mono" style="font-size:.8rem;">${esc(fmtF(a))}</td>${now ? `<td class="mono" style="font-size:.8rem;">${esc(fmtF(b))}</td><td>${eq ? '<span class="ok">✓</span>' : '<span class="bad">✗</span>'}</td>` : ""}</tr>`;
+  }).join("");
+  const sysRows = Object.keys(FP_BEFORE.sysctls).map(k => {
+    const a = FP_BEFORE.sysctls[k], b = now ? now.sysctls[k] : null;
+    const eq = now ? a === b : null; if (eq === false) diffs++;
+    return `<tr><td class="mono" style="font-size:.8rem;">${esc(k)}</td><td class="mono">${esc(a ?? "—")}</td>${now ? `<td class="mono">${esc(b ?? "—")}</td><td>${eq ? '<span class="ok">✓</span>' : '<span class="bad">✗</span>'}</td>` : ""}</tr>`;
+  }).join("");
+  const head = now ? (diffs === 0 ? '<div class="banner good">✓ Identical to the “before” fingerprint: every file, mode and kernel setting.</div>'
+                                  : `<div class="banner warn">${diffs} item(s) differ from “before”. Expected while changes are applied; after rollback this must be 0.</div>`)
+                   : `<div class="muted" style="margin-bottom:6px;">“Before” taken at ${esc(FP_BEFORE.taken_at)}.</div>`;
+  $("#fpBody").innerHTML = head + `<div style="overflow-x:auto;"><table><thead><tr><th>Item</th><th>Before</th>${now ? "<th>Now</th><th></th>" : ""}</tr></thead><tbody>${fileRows}${sysRows}</tbody></table></div>`;
+}
+$("#fpTake").onclick = e => busy(e.currentTarget, async () => { FP_BEFORE = await api("/api/fingerprint"); renderFp(null); });
+$("#fpCompare").onclick = e => busy(e.currentTarget, async () => { if (!FP_BEFORE) return toast("take a “before” fingerprint first", true); renderFp(await api("/api/fingerprint")); });
+
+async function loadRuns() {
+  try {
+    const { runs } = await api("/api/runs");
+    $("#runsBody").innerHTML = runs.length ? `<table><thead><tr><th>Run</th><th>When</th><th>Changes</th><th>Status</th><th></th></tr></thead><tbody>${runs.slice(0, 12).map(r =>
+      `<tr><td class="mono">${esc(r.run_id)}<div class="sub">${esc(r.generated_by)}</div></td><td>${esc(r.when)}</td><td>${r.applied}</td>
+       <td>${r.rolled_back ? '<span class="muted">rolled back</span>' : '<span class="ok">applied</span>'}${r.error ? `<div class="sub bad">${esc(r.error)}</div>` : ""}</td>
+       <td>${r.rolled_back ? "" : `<button class="btn small" data-rb="${esc(r.run_id)}">Roll back</button>`}</td></tr>`).join("")}</tbody></table>` : '<span class="muted">No runs yet.</span>';
+    $$("[data-rb]").forEach(b => b.onclick = () => modal(`<h3>Roll back run ${esc(b.dataset.rb)}?</h3><p>Every change in the run is reverted in reverse order; files the run created are removed.</p>`,
+      async () => {
+        try {
+          const r = await api("/api/rollback", { run_id: b.dataset.rb });
+          toast(`reverted ${r.reverted}/${r.total}`); loadRuns();
+          if (FP_BEFORE) renderFp(await api("/api/fingerprint"));
+        } catch (e) { toast(e.message, true); return false; }
+      }, "Roll back"));
+  } catch (e) { $("#runsBody").innerHTML = `<span class="bad">${esc(e.message)}</span>`; }
+}
+
+// ---------------------------------------------------------------- gate lab
+let PRESETS = [];
+async function loadPresets() {
+  try {
+    PRESETS = (await api("/api/presets")).presets;
+    const groups = {};
+    PRESETS.forEach((p, i) => (groups[p.group] = groups[p.group] || []).push([i, p]));
+    $("#presetSel").innerHTML = '<option value="">Load an attack or example…</option>' + Object.entries(groups).map(([g, items]) =>
+      `<optgroup label="${esc(g)}">${items.map(([i, p]) => `<option value="${i}">${esc(p.label)} (expect: ${esc(p.expect)})</option>`).join("")}</optgroup>`).join("");
+  } catch (e) { toast(e.message, true); }
+}
+$("#presetLoad").onclick = () => { const p = PRESETS[$("#presetSel").value]; if (p) { $("#planEditor").value = JSON.stringify(p.plan, null, 2); $("#fileName").textContent = ""; } };
+$("#fileIn").onchange = e => { const f = e.target.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { $("#planEditor").value = rd.result; $("#fileName").textContent = f.name; }; rd.readAsText(f); e.target.value = ""; };
+async function runLab(ablate, btn) {
+  await busy(btn, async () => {
+    const res = await api("/api/validate", { plan: $("#planEditor").value, ablate });
+    const n = res.rows.length;
+    const head = !n ? '<div class="banner info">The plan has no actions.</div>'
+      : res.rejected ? `<div class="banner bad">✗ Plan refused: ${res.rejected} of ${n} action(s) stopped at a gate. Nothing would run.</div>`
+      : `<div class="banner good">✓ All ${n} action(s) pass: this plan would be applied.</div>`;
+    $("#labOut").innerHTML = head + res.rows.map(actionCard).join("");
+  });
+}
+$("#labRun").onclick = e => runLab(false, e.currentTarget);
+$("#labAblate").onclick = e => runLab(true, e.currentTarget);
+$("#corpusBtn").onclick = e => busy(e.currentTarget, async () => {
+  const res = await api("/api/corpus", {});
+  $("#corpusBody").innerHTML = Object.entries(res).map(([name, c]) => {
+    const o = c.summary.overall;
+    return `<div style="margin-bottom:10px;"><b>${esc(name)}</b>: ${o.correct.k}/${o.correct.n} correct · weakening reaching apply <b>${frac(o.weakening_reaching_apply)}</b> · justification swaps changing a verdict <b>${frac(c.summary.ablation_outcome_changes)}</b>
+      <details class="just"><summary>${c.cases.length} cases</summary><table><thead><tr><th>Case</th><th>Expect</th><th>Got</th><th>Gate</th></tr></thead><tbody>${c.cases.map(x =>
+        `<tr><td>${esc(x.label)}<div class="sub">${esc(x.reason)}</div></td><td>${esc(x.expect)}</td><td>${x.correct ? '<span class="ok">✓</span>' : '<span class="bad">✗</span>'} ${esc(x.outcome)}</td><td>${esc(x.gate || "")}</td></tr>`).join("")}</tbody></table></details></div>`;
+  }).join("");
+});
+
+// ---------------------------------------------------------------- results
+async function loadResults() {
+  if (RESULTS) return;
+  try { RESULTS = await api("/api/results"); } catch (e) { return toast(e.message, true); }
+  const t = RESULTS.tiles || {};
+  const tiles = [];
+  if (t.rollback) tiles.push([frac(t.rollback), "rollbacks byte-exact"]);
+  if (t.auto_revert) tiles.push([frac(t.auto_revert), "exact auto-revert on an injected failure"]);
+  if (t.ablation) tiles.push([frac(t.ablation), "justification swaps that changed a verdict"]);
+  if (t.intent_fp) tiles.push([frac(t.intent_fp), "intent false alarms on unchanged services"]);
+  if (t.prompt_saved != null) tiles.push([(100 * t.prompt_saved).toFixed(0) + "%", "smaller model prompts thanks to intent"]);
+  if (RESULTS.llm) tiles.push([pct(RESULTS.llm.clean), "LLM actions passing all gates (rest refused)"]);
+  $("#resTiles").innerHTML = tiles.map(([n, l]) => `<div class="tile"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`).join("");
+  $("#resSources").textContent = "Sources: " + (RESULTS.sources || []).join(" · ");
+  drawCharts();
+}
+
+const tip = $("#tip");
+function bindTips(root) {
+  $$("[data-tip]", root).forEach(el => {
+    el.addEventListener("mousemove", e => { tip.innerHTML = el.dataset.tip; tip.style.display = "block"; tip.style.left = (e.clientX + 14) + "px"; tip.style.top = (e.clientY + 14) + "px"; });
+    el.addEventListener("mouseleave", () => tip.style.display = "none");
+  });
+}
+function drawCharts() {
+  if (!RESULTS) return;
+  // Held-out: horizontal bars of k/n with Wilson whiskers, one series.
+  const H = RESULTS.heldout;
+  if (H) {
+    const W = 560, rowH = 54, top = 10, left = 150, right = 110, h = top + rowH * H.length + 26;
+    const x = v => left + v * (W - left - right);
+    let s = `<svg class="chart" viewBox="0 0 ${W} ${h}" role="img" aria-label="Held-out attacks reaching apply per gate version">`;
+    s += '<g class="grid">' + [0, .25, .5, .75, 1].map(v => `<line x1="${x(v)}" x2="${x(v)}" y1="${top}" y2="${h - 22}"/>`).join("") + "</g>";
+    s += [0, .25, .5, .75, 1].map(v => `<text x="${x(v)}" y="${h - 6}" text-anchor="middle">${v * 100}%</text>`).join("");
+    H.forEach((d, i) => {
+      const y = top + i * rowH + 12, bh = 24, r = d.k / d.n;
+      const tipTxt = `${esc(d.label)} (${esc(d.commit || "")})<br><b>${d.k} of ${d.n}</b> reached apply · ${(100 * r).toFixed(1)}%<br>95% CI ${(100 * d.ci95[0]).toFixed(1)}–${(100 * d.ci95[1]).toFixed(1)}%`;
+      s += `<text x="${left - 10}" y="${y + bh / 2 + 4}" text-anchor="end">${esc(d.label)}</text>`;
+      const bw = Math.max(x(r) - x(0), 3);
+      s += `<path d="M${x(0)},${y} h${bw - 4} q4,0 4,4 v${bh - 8} q0,4 -4,4 h-${bw - 4} z" fill="var(--series-1)" data-tip="${tipTxt}"/>`;
+      s += `<line x1="${x(d.ci95[0])}" x2="${x(d.ci95[1])}" y1="${y + bh / 2}" y2="${y + bh / 2}" stroke="var(--text-primary)" stroke-width="2"/>`;
+      s += `<line x1="${x(d.ci95[0])}" x2="${x(d.ci95[0])}" y1="${y + bh / 2 - 5}" y2="${y + bh / 2 + 5}" stroke="var(--text-primary)" stroke-width="2"/>`;
+      s += `<line x1="${x(d.ci95[1])}" x2="${x(d.ci95[1])}" y1="${y + bh / 2 - 5}" y2="${y + bh / 2 + 5}" stroke="var(--text-primary)" stroke-width="2"/>`;
+      s += `<text class="val" x="${x(Math.max(r, d.ci95[1])) + 8}" y="${y + bh / 2 + 4}">${d.k} / ${d.n}</text>`;
+      s += `<rect x="0" y="${y - 6}" width="${W}" height="${bh + 12}" fill="transparent" data-tip="${tipTxt}"/>`;
+    });
+    s += "</svg>";
+    $("#chartHeldout").innerHTML = s; bindTips($("#chartHeldout"));
+  } else $("#chartHeldout").innerHTML = '<p class="muted">Result files not found.</p>';
+
+  // Before/after: grouped vertical bars, two series, 0-100%.
+  const B = RESULTS.before_after;
+  if (B) {
+    const W = 560, h = 260, top = 16, bottom = 46, left = 40, right = 10;
+    const y = v => top + (1 - v) * (h - top - bottom);
+    const gw = (W - left - right) / B.length, bw = 46, gap = 2;
+    let s = `<svg class="chart" viewBox="0 0 ${W} ${h}" role="img" aria-label="Before and after the fixes">`;
+    s += '<g class="grid">' + [0, .5, 1].map(v => `<line x1="${left}" x2="${W - right}" y1="${y(v)}" y2="${y(v)}"/>`).join("") + "</g>";
+    s += [0, .5, 1].map(v => `<text x="${left - 6}" y="${y(v) + 4}" text-anchor="end">${v * 100}%</text>`).join("");
+    B.forEach((d, i) => {
+      const cx = left + gw * i + gw / 2;
+      [["before", "var(--series-2)", -1, "Review 1 code", RESULTS.before_commit], ["after", "var(--series-1)", 1, "Release", RESULTS.after_commit]].forEach(([k, col, side, name, commit]) => {
+        const v = d[k].k / d[k].n, bx = side < 0 ? cx - bw - gap / 2 : cx + gap / 2, by = y(v), bh = Math.max(y(0) - by, 2);
+        const tipTxt = `${esc(d.metric)}<br>${esc(name)} (${esc(commit || "")}): <b>${d[k].k}/${d[k].n}</b> · ${(100 * v).toFixed(1)}%`;
+        s += `<path d="M${bx},${y(0)} v-${bh - 4} q0,-4 4,-4 h${bw - 8} q4,0 4,4 v${bh - 4} z" fill="${col}" data-tip="${tipTxt}"/>`;
+        s += `<text class="val" x="${bx + bw / 2}" y="${by - 6}" text-anchor="middle">${(100 * v).toFixed(0)}%</text>`;
+      });
+      s += `<text x="${cx}" y="${h - bottom + 18}" text-anchor="middle">${esc(d.metric)}</text>`;
+    });
+    s += "</svg>";
+    $("#chartBA").innerHTML = s; bindTips($("#chartBA"));
+  } else $("#chartBA").innerHTML = '<p class="muted">Result files not found.</p>';
+}
+$("#rerunBtn").onclick = e => busy(e.currentTarget, async () => {
+  const res = await api("/api/eval", { runs: parseInt($("#rerunN").value, 10) });
+  $("#rerunInfo").textContent = `${res.runs} seeded runs in ${res.seconds}s · commit ${res.commit}`;
+  $("#rerunBody").innerHTML = `<table><thead><tr><th>Metric</th><th>Result</th><th>95% CI</th></tr></thead><tbody>${res.rows.map(r =>
+    `<tr><td>${esc(r.metric)}</td><td class="mono"><b>${r.k}/${r.n}</b> (${pct(r)})</td><td class="mono">${(100 * r.ci95[0]).toFixed(1)}–${(100 * r.ci95[1]).toFixed(1)}%</td></tr>`).join("")}
+    <tr><td>Explainer prompt saved by intent</td><td class="mono"><b>${(100 * res.prompt_saved).toFixed(1)}%</b></td><td></td></tr></tbody></table>`;
+});
+
+// ---------------------------------------------------------------- start
+loadPresets();
+loadStatus().then(() => {
+  const t = (location.hash || "#scan").slice(1);
+  openTab(t);
+  if (t === "scan") $("#scanBtn").click();      // the first thing anyone wants to see
+}).catch(e => toast(e.message, true));
+</script>
+</body>
+</html>
