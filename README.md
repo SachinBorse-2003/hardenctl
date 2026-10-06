@@ -53,6 +53,8 @@ hardenctl apply PLAN [--dry-run] [--yes]
 hardenctl rollback [RUN_ID | --last]
 hardenctl runs
 hardenctl configure [--show | --clear]
+hardenctl gui [--port 8765] [--no-open]
+hardenctl eval [--suite S] [--runs N] [--llm-runs N]
 ```
 
 ## Intent
@@ -155,6 +157,32 @@ Everything lives in the **invoking user's** `~/.hardenctl/`, even under `sudo`:
 These files describe a real host's attack surface. **Do not commit them**
 (they are in `.gitignore`).
 
+## Dashboard
+
+```bash
+sudo hardenctl gui            # prints a URL with a one-time token; open it in a browser
+```
+
+A local web dashboard over the same pipeline, with no extra dependencies:
+
+| Tab | What it shows |
+|---|---|
+| Scan | Every socket with its process, package, exposure and intent verdict; allow or forbid from the row |
+| Intent | The declaration, editable |
+| Plan & Apply | Each proposed action at each of the three gates; apply behind a typed confirmation; rollback; a before/after fingerprint of every file and sysctl hardenctl may touch |
+| Gate Lab | Load or write a plan, see where each action stops, swap its justification six ways (the verdict must not change); run both frozen corpora |
+| Results | The recorded results as charts with 95% intervals, and a live re-run of the seeded suites |
+
+The dashboard runs as root, so the server is itself attack surface:
+
+- it binds to 127.0.0.1 only
+- every request needs a per-session token (in the page URL; a custom header for the API)
+- the Host and Origin headers must be the loopback address, against DNS rebinding and cross-site requests
+- state-changing calls are JSON POSTs only
+- a strict Content-Security-Policy applies
+- every value from the host or a model is HTML-escaped before display
+- apply only takes a plan the server generated itself, re-runs the gates, and runs it at most once
+
 ## Evaluation
 
 ```bash
@@ -192,6 +220,7 @@ Debian/Ubuntu, single host, CIS Level 1 server subset.
 | Three-gate validator, gate 3 v2.1 (fail-closed) | working; v1 34/34, held-out v2 5/44 leaked on first run |
 | Transactional apply + rollback, sysctl persistence, `sshd -t` | working |
 | `hardenctl eval` harness, pytest, CI | working |
+| Local web dashboard (`hardenctl gui`) | working |
 | CIS scoring and baselines (`eval/run_baselines.sh`) | script ready; run on the VM |
 | OSV.dev / CISA KEV / EPSS enrichment | not built |
 | Reachability probing, blast radius | not built (future work) |
@@ -200,8 +229,8 @@ Debian/Ubuntu, single host, CIS Level 1 server subset.
 ## Tests
 
 ```bash
-python3 -m pytest -q        # 25 tests: gates on both corpora, collectors,
-                            # executor, rollback, intent, and the two scripts below
+python3 -m pytest -q        # 34 tests: gates on both corpora, collectors,
+                            # executor, rollback, intent, the dashboard, and the two scripts below
 python3 test_injection.py   # frozen corpus v1, printed case by case
 python3 test_e2e.py         # scan → plan → apply → rollback, byte-exact, sandboxed
 ```

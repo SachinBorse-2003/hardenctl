@@ -10,6 +10,7 @@ already answered.
 
 | # | Review | Panel comment (verbatim) | Response | Evidence (commit / doc) | Status |
 |---|---|---|---|---|---|
+| P0 | Final | *Paraphrased by the student; replace with the panel's exact words:* provide a GUI and a better presentation/demo | Added `hardenctl gui`, a local web dashboard (scan, intent, plan/apply/rollback with a fingerprint check, Gate Lab, results charts). It is secured as root-facing software and tested over HTTP | `hardenctl/gui/`, `tests/test_gui.py`, README "Dashboard" | done |
 | P1 | 0 | | | | |
 | P2 | 1 | | | | |
 | P3 | 2 | | | | |
