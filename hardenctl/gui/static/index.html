@@ -347,8 +347,8 @@ async function loadStatus() {
   STATUS = await api("/api/status");
   $("#host").textContent = STATUS.host;
   const b = [];
-  b.push(STATUS.root ? '<span class="badge good">root</span>' : '<span class="badge warn">not root · read-only</span>');
-  if (STATUS.sandbox) b.push('<span class="badge warn">sandbox</span>');
+  if (STATUS.sandbox) b.push('<span class="badge warn">sandbox lab · apply enabled</span>');
+  else b.push(STATUS.root ? '<span class="badge good">root</span>' : '<span class="badge warn">not root · read-only</span>');
   b.push(STATUS.model_ready ? `<span class="badge">model: ${esc(STATUS.model)}</span>` : '<span class="badge">no model key</span>');
   $("#badges").innerHTML = b.join("");
   $("#proposer").options[1].disabled = !STATUS.model_ready;
