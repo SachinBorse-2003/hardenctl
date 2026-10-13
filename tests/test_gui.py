@@ -56,9 +56,18 @@ def test_api_rejects_missing_or_wrong_token(server, headers):
     assert req(base, "/api/status", headers=headers)[0] == 403
 
 
+def test_ssh_tunnel_from_another_port_allowed(server):
+    base, token = server
+    # ssh -L 9000:127.0.0.1:8765 -> the browser sends Host: localhost:9000
+    assert req(base, "/api/status", token, headers={"Host": "localhost:9000"})[0] == 200
+    assert req(base, "/api/scan", token, body={},
+               headers={"Host": "localhost:9000", "Origin": "http://localhost:9000"})[0] == 200
+
+
 def test_dns_rebinding_and_cross_origin_refused(server):
     base, token = server
     assert req(base, "/api/status", token, headers={"Host": "evil.example"})[0] == 403
+    assert req(base, "/api/status", token, headers={"Host": "127.0.0.1.evil.example:8765"})[0] == 403
     assert req(base, "/api/scan", token, body={}, headers={"Origin": "http://evil.example"})[0] == 403
 
 
@@ -112,5 +121,6 @@ def test_results_and_presets(server):
     base, token = server
     _, res, _ = req(base, "/api/results", token)
     assert [h["k"] for h in res["heldout"]] == [35, 5, 1]
+    assert res["heldout_p"] < 1e-9
     _, pre, _ = req(base, "/api/presets", token)
     assert len(pre["presets"]) > 50

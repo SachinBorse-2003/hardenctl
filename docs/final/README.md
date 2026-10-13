@@ -6,8 +6,8 @@ root on the VM or something only you can do.
 
 | Checklist item | Where | Status |
 |---|---|---|
-| Full system implemented and demonstrated end-to-end | `hardenctl` v1.0.0; testbed in `lab/` | done in code; **live run on the VM is yours** |
-| Final results with statistical rigour (multiple runs/seeds, CIs) | [01_results](01_results.md) | done: 30 seeded runs per suite, Wilson/bootstrap 95% CIs |
+| Full system implemented and demonstrated end-to-end | `hardenctl` v1.0.0 (CLI + `hardenctl gui` dashboard); testbed in `lab/` | done in code; **real-host run as root pending** (see `run_baselines.sh hardenctl`) |
+| Final results with statistical rigour (multiple runs/seeds, CIs) | [01_results](01_results.md) | done: 30 seeded runs per suite, Wilson/bootstrap 95% CIs, Fisher exact test on the headline comparison (p = 4.3 × 10⁻¹¹) |
 | Comparison table against 2–3 baselines | [02_baseline_comparison](02_baseline_comparison.md) | gate v1 vs v2 vs v2.1 and rules vs LLM: done. **OpenSCAP and dev-sec CIS delta: pending** (`eval/run_baselines.sh`, root) |
 | Robustness and evasion testing (CyberSec) | [04_robustness_and_evasion](04_robustness_and_evasion.md) | done: held-out corpus v2, 438-case ablation, poisoned LLM runs |
 | Limitations honestly discussed | [05_limitations](05_limitations.md) | done |
@@ -17,8 +17,8 @@ root on the VM or something only you can do.
 | Plagiarism report within threshold | — | **yours** (institute tool) |
 | Publication status | [../thesis/paper_outline.md](../thesis/paper_outline.md) | outline done; **venue and submission are yours** |
 | All prior panel feedback addressed and traceable | [09_feedback_tracker](09_feedback_tracker.md) | self-commitments traced; **panel comments must be copied in** |
-| Ethical compliance | `docs/review0/03_threat_model_scope_ethics.md` | unchanged: lab VM only, no third-party targets, no PII; no vulnerabilities in third-party software found, so no disclosure needed |
-| Viva readiness: defend every design choice | [08_viva_defence](08_viva_defence.md) | 16 questions with plain and technical answers |
+| Ethical compliance | `docs/review0/03_threat_model_scope_ethics.md` | documented: lab VM only, no third-party targets, no PII; no vulnerabilities in third-party software found, so no disclosure needed. **Guide sign-off still blank** in `docs/review1/README.md` |
+| Viva readiness: defend every design choice | [08_viva_defence](08_viva_defence.md) | 19 questions with plain and technical answers, including the dashboard |
 | Future work: genuine next steps | [10_future_work](10_future_work.md) | done |
 | Error analysis (carried from Review 2) | [03_error_analysis](03_error_analysis.md) | 12 real failures, with cause and fix or limitation |
 

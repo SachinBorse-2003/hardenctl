@@ -49,5 +49,17 @@ Say these before the panel finds them.
 12. **One distribution.** Ubuntu 24.04 only (Debian-family by design).
 13. **LLM sample.** 10 runs per condition, one model (Claude Sonnet 5), one
     temperature (provider default). No local-model (Ollama) runs.
-14. **Token site / relay.** Not built. It was the first item to cut if time
+14. **Dashboard on headless servers.** `hardenctl gui` serves a web page;
+    servers usually have no browser, so it is reached through an SSH tunnel
+    (`ssh -L 8765:127.0.0.1:8765 host`). It never listens on the network.
+15. **The dashboard is root-facing software.** It adds attack surface while it
+    runs: about 700 lines of server and API code. Mitigations: loopback bind,
+    per-session token, Host/Origin checks, JSON-only writes, strict CSP,
+    escaped output, and apply only on server-generated, re-gated plans. These
+    are tested (10 HTTP tests) but not independently audited. The CLI remains
+    the primary interface.
+16. **Backup screenshots are from the sandbox lab.** The presentation's
+    backup slides show the dashboard against the eval sandbox (paths under
+    `/tmp/hctl-eval-…`), not the real host.
+17. **Token site / relay.** Not built. It was the first item to cut if time
     ran short, and it is not on either review checklist.

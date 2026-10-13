@@ -8,8 +8,9 @@ server itself part of the attack surface. So:
   - every request needs a random per-session token: in the URL for the page,
     in a custom header for the API (a cross-site page cannot set that header
     without a CORS preflight, which this server never grants)
-  - the Host header must be the loopback address and port (DNS rebinding),
-    and any Origin header must be this server's own origin
+  - the Host header must name the loopback address (DNS rebinding), and any
+    Origin header must be a loopback http origin; the port is not pinned, so
+    an SSH tunnel from any local port works (ssh -L 9000:127.0.0.1:8765)
   - anything that changes state is a JSON POST; apply additionally needs the
     typed confirmation "APPLY" and a plan the server generated itself
   - a strict Content-Security-Policy: no external scripts, styles or frames
@@ -68,9 +69,28 @@ def _page() -> str:
     return resources.files("hardenctl.gui").joinpath("static/index.html").read_text(encoding="utf-8")
 
 
+LOOPBACK_NAMES = {"127.0.0.1", "localhost"}
+
+
+def _loopback_host(value: str) -> bool:
+    """
+    True for "127.0.0.1" or "localhost", with or without a port.
+
+    The name is what defeats DNS rebinding (a rebinding attack arrives with
+    the attacker's domain in Host). The port is deliberately not checked, so
+    an SSH tunnel from a different local port (ssh -L 9000:127.0.0.1:8765)
+    still works.
+    """
+    name, _, port = value.rpartition(":") if value.count(":") == 1 else (value, "", "")
+    return name in LOOPBACK_NAMES and (port == "" or port.isdigit())
+
+
+def _loopback_origin(value: str) -> bool:
+    scheme, sep, rest = value.partition("://")
+    return scheme == "http" and sep == "://" and "/" not in rest and _loopback_host(rest)
+
+
 def make_handler(token: str, port: int):
-    allowed_hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
-    allowed_origins = {f"http://{h}" for h in allowed_hosts}
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "hardenctl"
@@ -95,10 +115,10 @@ def make_handler(token: str, port: int):
             self._send(code, json.dumps(data, default=str).encode(), "application/json")
 
         def _origin_ok(self) -> bool:
-            if self.headers.get("Host", "") not in allowed_hosts:
+            if not _loopback_host(self.headers.get("Host", "")):
                 return False
             origin = self.headers.get("Origin")
-            return origin is None or origin in allowed_origins
+            return origin is None or _loopback_origin(origin)
 
         def _token_ok(self, given: str | None) -> bool:
             return bool(given) and hmac.compare_digest(given, token)

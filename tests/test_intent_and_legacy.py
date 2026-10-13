@@ -28,3 +28,12 @@ def test_intent_filtering_shrinks_the_prompt():
 def test_legacy_script_passes(script):
     r = subprocess.run([sys.executable, script], cwd=REPO, capture_output=True, text=True)
     assert r.returncode == 0, r.stdout[-2000:]
+
+
+def test_fisher_exact_matches_known_values():
+    # a 2x2 table with no difference cannot be significant
+    assert evaluate.fisher_greater(5, 10, 5, 10) > 0.5
+    # the headline comparison: gate v1 35/44 vs gate v2 5/44
+    assert evaluate.fisher_greater(35, 44, 5, 44) < 1e-9
+    # Fisher's tea-tasting example (3 of 4 right): one-sided p = 17/70
+    assert abs(evaluate.fisher_greater(3, 4, 1, 4) - 17 / 70) < 1e-12
