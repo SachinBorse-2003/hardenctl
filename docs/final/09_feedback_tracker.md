@@ -29,7 +29,7 @@ already answered.
 | S8 | Review 1, 04 | Held-out corpus v2, ideally by another author | Done (55 cases, frozen `197e4d3`), same author | `corpus/injection_v2.json` |
 | S9 | Review 1, 05 R5 | Confirm an Ubuntu 24.04 CIS profile | Not in Ubuntu's package; upstream SSG 0.1.82 has it | `eval/run_baselines.sh` |
 | S10 | Review 1, 05 R7 | Persist sysctls with rollback | Done, 112/112 | `executor.persist_sysctl` |
-| S11 | Master backlog P0 | Tests in pytest, CI | Done: 25 tests, GitHub Actions | `tests/`, `.github/workflows/ci.yml` |
+| S11 | Master backlog P0 | Tests in pytest, CI | Done: 36 tests (incl. 10 over HTTP for the dashboard), GitHub Actions | `tests/`, `.github/workflows/ci.yml` |
 | S12 | Review 0 | Network-namespace reachability probing | **Deferred** (stated in Review 1 and here) | `05_limitations.md` |
 | S13 | Review 0 | Blast radius | **Deferred** | `10_future_work.md` |
 | S14 | Review 1, 04 | Attribution accuracy on a labelled ground-truth VM | **Not done** | `05_limitations.md` |

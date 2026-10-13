@@ -491,6 +491,8 @@ def results() -> dict:
             {"label": "Gate v2.1 (current)", "commit": _commit(rel),
              **rel["summaries"]["injection"]["corpora"]["injection_v2"]["by_set"]["heldout"]["weakening_reaching_apply"]},
         ]
+        h = out["heldout"]
+        out["heldout_p"] = evaluate.fisher_greater(h[0]["k"], h[0]["n"], h[1]["k"], h[1]["n"])
     if base and rel:
         b, r = base["summaries"], rel["summaries"]
         out["before_after"] = [

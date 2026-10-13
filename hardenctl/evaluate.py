@@ -72,6 +72,19 @@ def rate(k: int, n: int) -> dict:
     return out
 
 
+def fisher_greater(k1: int, n1: int, k2: int, n2: int) -> float:
+    """
+    One-sided Fisher exact test: p-value for "group 1's rate is higher than
+    group 2's" (e.g. old gate leaks more than new gate). Exact, so it holds
+    at small counts where a chi-square approximation would not.
+    """
+    from math import comb
+    total, succ = n1 + n2, k1 + k2
+    denom = comb(total, n1)
+    return sum(comb(succ, k) * comb(total - succ, n1 - k)
+               for k in range(k1, min(n1, succ) + 1)) / denom
+
+
 def mean_ci(xs: list[float], seed: int = 0, iters: int = 2000) -> dict:
     """Mean with a percentile-bootstrap 95% interval."""
     if not xs:

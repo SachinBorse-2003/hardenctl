@@ -121,3 +121,28 @@ already own the operator.
 Technical: out of scope (write access to the operator's state implies an
 equal- or higher-privilege attacker). Intent affects only what is *reported
 and explained*. It never lets a weakening action past gate 3.
+
+**Q17. Servers don't have browsers. Why a web dashboard?**
+Plain: you reach it from your laptop through SSH; it never opens itself to the network.
+Technical: it binds to 127.0.0.1 only. `ssh -L 8765:127.0.0.1:8765 server` forwards
+your laptop's port through the authenticated, encrypted SSH session. So the
+dashboard needs SSH access first and the session token second. The CLI stays
+the primary interface for scripts and automation.
+
+**Q18. A web server running as root: haven't you just added an attack surface?**
+Plain: yes, a small one, and it's locked down like any root service.
+Technical: loopback bind; a 192-bit per-session token compared in constant
+time; the Host header must name the loopback address (blocks DNS rebinding);
+the Origin must be a loopback http origin and writes need a custom header and
+JSON (blocks cross-site requests, because a browser can't send either without
+a CORS preflight that the server never grants); strict CSP; every host or
+model string is HTML-escaped (a malicious process name can't inject script);
+apply accepts only a plan the server generated, re-runs the gates on it, and
+runs it once. 10 HTTP tests cover these.
+
+**Q19. Does the dashboard bypass any gate?**
+Plain: no. The buttons call the same functions as the CLI.
+Technical: `gui/api.py` calls `collectors`, `intent.evaluate`, the proposers,
+`validate_plan` and `executor.apply_plan`. The Gate Lab trace uses the same
+`schema_reason` and `check_monotonicity` the validator uses; it never applies
+anything.

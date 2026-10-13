@@ -186,7 +186,7 @@ The dashboard runs as root, so the server is itself attack surface:
 ## Evaluation
 
 ```bash
-python3 -m pytest -q                    # 25 sandboxed tests, no root
+python3 -m pytest -q                    # 36 sandboxed tests, no root
 hardenctl eval --runs 30 --seed 1       # all seeded suites -> results/*.json
 hardenctl eval -s llm --llm-runs 10     # the model proposer (needs a provider)
 sudo eval/run_baselines.sh …            # CIS scoring vs OpenSCAP and dev-sec (lab VM)
@@ -229,7 +229,7 @@ Debian/Ubuntu, single host, CIS Level 1 server subset.
 ## Tests
 
 ```bash
-python3 -m pytest -q        # 34 tests: gates on both corpora, collectors,
+python3 -m pytest -q        # 36 tests: gates on both corpora, collectors,
                             # executor, rollback, intent, the dashboard, and the two scripts below
 python3 test_injection.py   # frozen corpus v1, printed case by case
 python3 test_e2e.py         # scan → plan → apply → rollback, byte-exact, sandboxed

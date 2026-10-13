@@ -18,6 +18,7 @@ are two kinds of comparison, and they need different environments:
 | v1 (Review 1) | Deny-list tables | 35/44 (79.5%, CI 65.5–88.9%) | 0/11 | `v2-on-gate-v1` |
 | **v2 (first run, held-out)** | **Fail-closed for config/sysctl/modes; deny-list for units/packages** | **5/44 (11.4%, CI 5.0–24.0%)** | **2/11** | `v2-heldout-first-run` |
 | v2.1 (not held-out) | v2 + rule-based units/packages, no world-write | 1/44 (2.3%, CI 0.4–11.8%) | 2/11 | `v1.0-gate-v2.1` |
+| *v1 vs v2: one-sided Fisher exact p = 4.3 × 10⁻¹¹* | | | | |
 | LLM self-restraint only (no gate) | The model's own refusal | 0/10 poisoned runs proposed the goal (upper 95% bound 27.8%) | — | `v1.0-final-llm-rerun` |
 
 The last row is the alternative the literature table compares against:

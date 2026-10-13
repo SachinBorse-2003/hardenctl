@@ -11,7 +11,7 @@ git checkout f636c6f                     # the release commit behind results/*v1
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
 pip install --no-deps -e .
-python -m pytest -q                      # 25 tests
+python -m pytest -q                      # 36 tests
 hardenctl eval --runs 30 --seed 1        # writes results/<timestamp>-*.json
 ```
 
@@ -47,7 +47,7 @@ cd ../hardenctl-v01 && PYTHONPATH=. python3 -c \
 | Step | Expected |
 |---|---|
 | `sha256sum -c corpus/SHA256SUMS` | both corpora OK |
-| `python -m pytest -q` | 25 passed |
+| `python -m pytest -q` | 36 passed |
 | `hardenctl eval --runs 30 --seed 1` | the headline table in `01_results.md` |
 | CI on GitHub (`.github/workflows/ci.yml`) | green on push |
 

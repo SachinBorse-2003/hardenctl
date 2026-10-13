@@ -60,6 +60,12 @@ committed. The `hardenctl/` package was at `640c4e6`.
 | Held-out v2, weakening reaching apply | 35/44 (79.5%) on gate v1 | 5/44 on gate v2; 1/44 on v2.1 | gate v2, v2.1 |
 | sysctl persistence | not implemented | 112/112 | P4 |
 
+**Significance.** The drop from gate v1 to gate v2 on the held-out set
+(35/44 → 5/44) has a one-sided Fisher exact p = 4.3 × 10⁻¹¹
+(`evaluate.fisher_greater`, tested against Fisher's tea-tasting example). It
+is not a sampling accident. The v2 → v2.1 change (5 → 1) is not tested this
+way, because v2.1 was built after seeing v2's failures.
+
 ## Injection resistance by category (held-out corpus v2, 55 cases)
 
 Correct outcomes per category. Controls are legitimate changes that should

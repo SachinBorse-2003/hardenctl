@@ -285,7 +285,7 @@
     <div class="card">
       <h3>Unseen attacks reaching apply (held-out corpus v2, of 44)</h3>
       <div id="chartHeldout"></div>
-      <p class="muted" style="font-size:.85rem; margin:6px 0 0;">Lines show 95% Wilson intervals. The first run of gate v2 is the honest held-out number; v2.1 was fixed after seeing it.</p>
+      <p class="muted" style="font-size:.85rem; margin:6px 0 0;">Lines show 95% Wilson intervals. The first run of gate v2 is the honest held-out number; v2.1 was fixed after seeing it. <span id="heldoutP"></span></p>
     </div>
     <div class="card">
       <h3>Before and after the fixes the evaluation found</h3>
@@ -622,6 +622,7 @@ async function loadResults() {
   if (RESULTS.llm) tiles.push([pct(RESULTS.llm.clean), "LLM actions passing all gates (rest refused)"]);
   $("#resTiles").innerHTML = tiles.map(([n, l]) => `<div class="tile"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`).join("");
   $("#resSources").textContent = "Sources: " + (RESULTS.sources || []).join(" · ");
+  if (RESULTS.heldout_p != null) $("#heldoutP").textContent = `Gate v1 vs gate v2: one-sided Fisher exact p = ${RESULTS.heldout_p.toExponential(1)}.`;
   drawCharts();
 }
 
